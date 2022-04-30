@@ -22,7 +22,7 @@ public class Contact extends BaseEntity implements Serializable, PersonRelated {
 
     private String type;
     private String value;
-    // bi-directional many-to-one association to Person
+
     @JsonIgnore
     @ManyToOne
     private Person person;

@@ -1,11 +1,5 @@
--- MySQL dump 10.13  Distrib 8.0.20, for Win64 (x86_64)
---
--- ------------------------------------------------------
-
---
--- Table structure for table groupdef
---
--- DROP TABLE IF EXISTS groupdef;
+-- Schema for H2 Test database
+DROP TABLE IF EXISTS groupdef;
 CREATE TABLE groupdef (
   id SERIAL PRIMARY KEY,
   name varchar(255) NOT NULL,
@@ -15,10 +9,7 @@ CREATE TABLE groupdef (
   CONSTRAINT groupname_UNIQUE UNIQUE (name)
 );
 
---
--- Table structure for table person
---
--- DROP TABLE IF EXISTS person;
+DROP TABLE IF EXISTS person;
 CREATE TABLE person (
   id SERIAL PRIMARY KEY,
   prename varchar(255) NOT NULL,
@@ -32,12 +23,7 @@ CREATE TABLE person (
   password varchar(255) DEFAULT NULL
 );
 
-
---
--- Table structure for table `contact`
---
-
--- DROP TABLE IF EXISTS contact;
+DROP TABLE IF EXISTS contact;
 CREATE TABLE contact (
   id SERIAL PRIMARY KEY,
   type varchar(255) NOT NULL,
@@ -49,11 +35,7 @@ CREATE TABLE contact (
   CONSTRAINT contact_ibfk_1 FOREIGN KEY (person_id) REFERENCES person (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
---
--- Table structure for table clubevent
---
-
--- DROP TABLE IF EXISTS clubevent;
+DROP TABLE IF EXISTS clubevent;
 CREATE TABLE clubevent (
   id varchar(250) NOT NULL,
   location varchar(255) DEFAULT NULL,
@@ -68,10 +50,7 @@ CREATE TABLE clubevent (
   PRIMARY KEY (id)
 );
 
---
--- Table structure for table pflichten
---
--- DROP TABLE IF EXISTS pflichten;
+DROP TABLE IF EXISTS pflichten;
 CREATE TABLE pflichten (
   id SERIAL PRIMARY KEY,
   name varchar(45) NOT NULL,
@@ -84,10 +63,7 @@ CREATE TABLE pflichten (
   CONSTRAINT name_UNIQUE UNIQUE (name)
 );
 
---
--- Table structure for table adress
---
--- DROP TABLE IF EXISTS adress;
+DROP TABLE IF EXISTS adress;
 CREATE TABLE adress (
   id SERIAL PRIMARY KEY,
   adress1 varchar(255) DEFAULT NULL,
@@ -101,10 +77,7 @@ CREATE TABLE adress (
   CONSTRAINT adress_ibfk_1 FOREIGN KEY (person_id) REFERENCES person (id)
 );
 
---
--- Table structure for table altersgruppe
---
--- DROP TABLE IF EXISTS altersgruppe;
+DROP TABLE IF EXISTS altersgruppe;
 CREATE TABLE altersgruppe (
   id SERIAL PRIMARY KEY,
   event_id varchar(250) NOT NULL,
@@ -119,10 +92,7 @@ CREATE TABLE altersgruppe (
   CONSTRAINT fk_altersgruppe_pflicht FOREIGN KEY (pflicht_id) REFERENCES pflichten (id)
 );
 
---
--- Table structure for table attendance
---
--- DROP TABLE IF EXISTS attendance;
+DROP TABLE IF EXISTS attendance;
 CREATE TABLE attendance (
   id SERIAL PRIMARY KEY,
   on_date timestamp DEFAULT NULL,
@@ -134,11 +104,7 @@ CREATE TABLE attendance (
   CONSTRAINT attendance_ibfk_1 FOREIGN KEY (person_id) REFERENCES person (id)
 );
 
---
--- Table structure for table clubevent_addon
---
-
--- DROP TABLE IF EXISTS clubevent_addon;
+DROP TABLE IF EXISTS clubevent_addon;
 CREATE TABLE clubevent_addon (
   id varchar(250) NOT NULL,
   competition_type varchar(45) NOT NULL,
@@ -146,11 +112,7 @@ CREATE TABLE clubevent_addon (
   CONSTRAINT fk_event_addon_id FOREIGN KEY (id) REFERENCES clubevent (id)
 );
 
---
--- Table structure for table clubevent_has_person
---
-
--- DROP TABLE IF EXISTS clubevent_has_person;
+DROP TABLE IF EXISTS clubevent_has_person;
 CREATE TABLE clubevent_has_person (
   clubevent_id varchar(250) NOT NULL,
   person_id int NOT NULL,
@@ -160,11 +122,7 @@ CREATE TABLE clubevent_has_person (
   CONSTRAINT fk_clubevent_has_person_person1 FOREIGN KEY (person_id) REFERENCES person (id)
 );
 
---
--- Table structure for table deleted_entries
---
-
--- DROP TABLE IF EXISTS deleted_entries;
+DROP TABLE IF EXISTS deleted_entries;
 CREATE TABLE deleted_entries (
   id SERIAL PRIMARY KEY,
   tablename varchar(25) NOT NULL,
@@ -174,11 +132,7 @@ CREATE TABLE deleted_entries (
   deleted timestamp DEFAULT NULL
 );
 
---
--- Table structure for table event_has_altersgruppe
---
-
--- DROP TABLE IF EXISTS event_has_altersgruppe;
+DROP TABLE IF EXISTS event_has_altersgruppe;
 CREATE TABLE event_has_altersgruppe (
   id SERIAL PRIMARY KEY,
   event_id varchar(250) NOT NULL,
@@ -187,11 +141,7 @@ CREATE TABLE event_has_altersgruppe (
   CONSTRAINT fk_event_has_altersgruppe_event FOREIGN KEY (event_id) REFERENCES clubevent (id)
 );
 
---
--- Table structure for table notes
---
-
--- DROP TABLE IF EXISTS notes;
+DROP TABLE IF EXISTS notes;
 CREATE TABLE notes (
   id SERIAL PRIMARY KEY,
   person_id int NOT NULL,
@@ -200,11 +150,7 @@ CREATE TABLE notes (
   CONSTRAINT fk_notes_person FOREIGN KEY (person_id) REFERENCES person (id)
 );
 
---
--- Table structure for table persongroup
---
-
--- DROP TABLE IF EXISTS persongroup;
+DROP TABLE IF EXISTS persongroup;
 CREATE TABLE persongroup (
   id SERIAL PRIMARY KEY,
   person_id int NOT NULL,
@@ -217,11 +163,7 @@ CREATE TABLE persongroup (
   CONSTRAINT persongroup_ibfk_2 FOREIGN KEY (group_id) REFERENCES groupdef (id)
 );
 
---
--- Table structure for table relative
---
-
--- DROP TABLE IF EXISTS relative;
+DROP TABLE IF EXISTS relative;
 CREATE TABLE relative (
   id SERIAL PRIMARY KEY,
   person1 int NOT NULL,
@@ -235,11 +177,7 @@ CREATE TABLE relative (
   CONSTRAINT relative_ibfk_2 FOREIGN KEY (person2) REFERENCES person (id)
 );
 
---
--- Table structure for table startpaesse
---
-
--- DROP TABLE IF EXISTS startpaesse;
+DROP TABLE IF EXISTS startpaesse;
 CREATE TABLE startpaesse (
   id SERIAL PRIMARY KEY,
   person_id int NOT NULL,
@@ -251,11 +189,7 @@ CREATE TABLE startpaesse (
   CONSTRAINT startpaesse_ibfk_1 FOREIGN KEY (person_id) REFERENCES person (id)
 );
 
---
--- Table structure for table startpass_startrechte
---
-
--- DROP TABLE IF EXISTS startpass_startrechte;
+DROP TABLE IF EXISTS startpass_startrechte;
 CREATE TABLE startpass_startrechte (
   id SERIAL PRIMARY KEY,
   startpass_id int NOT NULL,
@@ -269,14 +203,25 @@ CREATE TABLE startpass_startrechte (
   CONSTRAINT startpass_startrechte_ibfk_1 FOREIGN KEY (startpass_id) REFERENCES startpaesse (id)
 );
 
---
--- Table structure for table version
---
--- DROP TABLE IF EXISTS version;
+DROP TABLE IF EXISTS version;
 CREATE TABLE version (
   id SERIAL PRIMARY KEY,
   version int NOT NULL,
   deleted timestamp DEFAULT NULL
 );
 
--- Dump completed
+CREATE TABLE measurement (
+	id INT(11) NOT NULL AUTO_INCREMENT,
+	person_id INT(11) NOT NULL,
+	measurement_type VARCHAR(25) NOT NULL,
+	classification VARCHAR(25) NULL,
+	on_time DATETIME NOT NULL,
+	measured DECIMAL(6, 3) NOT NULL,
+	changed TIMESTAMP NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	created DATETIME NULL DEFAULT current_timestamp(),
+	deleted DATETIME NULL DEFAULT NULL,
+	PRIMARY KEY (id),
+	CONSTRAINT index_measurement INDEX (person_id),
+	CONSTRAINT fk_measurement_person FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+;

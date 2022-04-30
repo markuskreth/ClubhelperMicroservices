@@ -1,4 +1,4 @@
-package de.kreth.clubhelper.model;
+package de.kreth.clubhelper.model.dao;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,11 +14,8 @@ import org.springframework.test.context.TestPropertySource;
 
 import de.kreth.clubhelper.entity.GroupDef;
 import de.kreth.clubhelper.entity.Person;
-import de.kreth.clubhelper.model.dao.GroupDao;
-import de.kreth.clubhelper.model.dao.PersonDao;
 
 @DataJpaTest()
-//@Sql(scripts = "classpath:data.sql")
 @TestPropertySource(properties = {
 	"spring.jpa.hibernate.ddl-auto=none"
 })

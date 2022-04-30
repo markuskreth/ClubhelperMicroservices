@@ -279,4 +279,17 @@ CREATE TABLE version (
   deleted timestamp DEFAULT NULL
 );
 
+CREATE TABLE measurement (
+	id INT(11) NOT NULL AUTO_INCREMENT,
+	person_id INT(11) NOT NULL,
+	measurement_type VARCHAR(25) NOT NULL,
+	on_time DATETIME NOT NULL,
+	measured DECIMAL(6, 3) NOT NULL,
+	changed TIMESTAMP NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	created DATETIME NULL DEFAULT current_timestamp(),
+	deleted DATETIME NULL DEFAULT NULL,
+	PRIMARY KEY (id),
+	INDEX index_measurement_person (person_id),
+	CONSTRAINT fk_measurement_person FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE NO ACTION ON DELETE NO ACTION
+);
 -- Dump completed
