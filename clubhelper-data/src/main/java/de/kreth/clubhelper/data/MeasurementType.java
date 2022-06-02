@@ -13,4 +13,8 @@ public enum MeasurementType {
     public String getUnit() {
 	return unit;
     }
+
+    public String getTitle() {
+	return "Sprunghöhen"; // Switch wenn mehr Werte implementiert werden
+    }
 }

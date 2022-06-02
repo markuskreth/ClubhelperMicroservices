@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -15,14 +14,13 @@ import org.springframework.web.client.RestTemplate;
 
 import de.kreth.clubhelper.data.BaseEntity;
 import de.kreth.clubhelper.data.Contact;
-import de.kreth.clubhelper.data.GroupDef;
 import de.kreth.clubhelper.data.Person;
 import de.kreth.clubhelper.data.PersonNote;
 import de.kreth.clubhelper.data.Startpass;
 import de.kreth.clubhelper.personedit.data.DetailedPerson;
 
 @Service
-public class BusinessImpl implements Business {
+public class BusinessImpl extends de.kreth.clubhelper.vaadincomponents.remote.BusinessImpl implements Business {
 
     private final RestTemplate webClient;
 
@@ -32,18 +30,14 @@ public class BusinessImpl implements Business {
     private final Map<Long, Person> cache = new HashMap<>();
 
     public BusinessImpl(@Autowired RestTemplate webClient) {
+	super(webClient);
 	this.webClient = webClient;
     }
 
-    public void setApiUrl(String apiUrl) {
-	this.apiUrl = apiUrl;
-    }
-
     @Override
-    public List<Person> getPersons() {
-	String url = apiUrl + "/person";
-	Person[] list = webClient.getForObject(url, Person[].class);
-	return Arrays.asList(list);
+    public void setApiUrl(String apiUrl) {
+	super.setApiUrl(apiUrl);
+	this.apiUrl = apiUrl;
     }
 
     @Override
@@ -73,14 +67,6 @@ public class BusinessImpl implements Business {
 	cache.put(p.getId(), p);
 
 	return DetailedPerson.createFor(p);
-    }
-
-    @Cacheable("groups")
-    @Override
-    public List<GroupDef> getAllGroups() {
-	String url = apiUrl + "/group";
-	GroupDef[] forObject = webClient.getForObject(url, GroupDef[].class);
-	return Arrays.asList(forObject);
     }
 
     @Override

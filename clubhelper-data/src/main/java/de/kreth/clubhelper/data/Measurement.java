@@ -8,7 +8,7 @@ public class Measurement extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1180061264146581246L;
 
     private LocalDateTime onTime;
-    private MeasurementType measurementType;
+    private MeasurementType measurementType = MeasurementType.JumpHeightSeconds;
     private String classification;
     private double measured;
 
@@ -20,6 +20,11 @@ public class Measurement extends BaseEntity implements Serializable {
 	this.onTime = onTime;
     }
 
+    /**
+     * Never null
+     *
+     * @return
+     */
     public MeasurementType getMeasurementType() {
 	return measurementType;
     }

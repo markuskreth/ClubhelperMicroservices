@@ -31,10 +31,7 @@
 		<!-- Main Maven repository -->
 		<repository>
 			<id>central</id>
-			<url>https://repo.maven.apache.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
+			<url>https://nexus.kreth-development.de/repository/maven-public/</url>
 		</repository>
 		<!-- Repository used by many Vaadin add-ons -->
 		<repository>
@@ -138,6 +135,13 @@
 		</pluginManagement>
 	</build>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <url>https://nexus.kreth-development.de/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+  
 	<modules>
 		<module>clubhelper-data</module>
 		<module>clubhelper-entity</module>
@@ -145,6 +149,7 @@
 		<module>clubhelper-backend-model</module>
 		<module>clubhelper-attendance</module>
 		<module>clubhelper-personedit</module>
+		<module>clubhelper-measurement</module>
 		<module>clubhelper-entrypoint</module>
 	</modules>
 
