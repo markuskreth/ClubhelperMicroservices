@@ -40,6 +40,15 @@ public class AttendanceController {
 	return findByOnDate;
     }
 
+    @GetMapping(value = "/between/{start}/{end}")
+    @ResponseBody
+    public List<Attendance> getAttendencesBetween(
+	    @PathVariable("start") @DateTimeFormat(iso = ISO.DATE) LocalDate start,
+	    @PathVariable("end") @DateTimeFormat(iso = ISO.DATE) LocalDate end) {
+	List<Attendance> findByOnDate = attendanceDao.findByOnDateBetween(start, end);
+	return findByOnDate;
+    }
+
     @GetMapping(value = "/for/{personId}")
     @ResponseBody
     public List<Attendance> getAttendencesFor(@PathVariable("personId") Long personId) {

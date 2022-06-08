@@ -1,5 +1,6 @@
 package de.kreth.clubhelper.attendance.export;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +10,8 @@ import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 
 import com.vaadin.flow.server.StreamResource;
+
+import de.kreth.clubhelper.attendance.remote.Business;
 
 public interface Exporter {
 
@@ -20,7 +23,7 @@ public interface Exporter {
 
     String getFileName();
 
-    StreamResource asResource(ExportData data);
+    StreamResource asResource(LocalDate onDate, Business business);
 
     public static List<Exporter> getExporters() {
 	Logger logger = org.slf4j.LoggerFactory.getLogger(Exporter.class);

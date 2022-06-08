@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +17,7 @@ import com.vaadin.flow.server.StreamResourceWriter;
 import com.vaadin.flow.server.VaadinSession;
 
 import de.kreth.clubhelper.attendance.data.PersonAttendance;
+import de.kreth.clubhelper.attendance.remote.Business;
 import de.kreth.clubhelper.data.Adress;
 import de.kreth.clubhelper.data.Contact;
 
@@ -32,15 +32,16 @@ class CoronaCsvExporter implements Exporter {
     }
 
     @Override
-    public StreamResource asResource(ExportData data) {
-	this.data = data;
+    public StreamResource asResource(LocalDate onDate, Business business) {
+
+	this.data = ExportData.createFor(onDate, business);
 	return new StreamResource(getFileName(), new StreamResourceWriter() {
 
 	    private static final long serialVersionUID = 1L;
 
 	    @Override
 	    public void accept(OutputStream stream, VaadinSession session) throws IOException {
-	    	
+
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(stream, StandardCharsets.UTF_8));
 		writeHead(out);
 

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 
 import de.kreth.clubhelper.attendance.data.PersonAttendance;
 import de.kreth.clubhelper.data.Adress;
+import de.kreth.clubhelper.data.Attendance;
 import de.kreth.clubhelper.data.Contact;
 import de.kreth.clubhelper.data.GroupDef;
 import de.kreth.clubhelper.data.OrderBy;
@@ -17,6 +18,8 @@ public interface Business {
     List<Person> getPersons(OrderBy order);
 
     List<PersonAttendance> getAttendance(LocalDate date);
+
+    List<Attendance> getAttendanceBetween(LocalDate start, LocalDate end);
 
     Authentication getCurrent();
 

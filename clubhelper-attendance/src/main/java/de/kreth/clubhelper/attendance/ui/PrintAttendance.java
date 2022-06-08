@@ -22,7 +22,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinServlet;
 
-import de.kreth.clubhelper.attendance.export.ExportData;
 import de.kreth.clubhelper.attendance.export.Exporter;
 import de.kreth.clubhelper.attendance.remote.Business;
 import de.kreth.clubhelper.attendance.remote.BusinessImpl;
@@ -55,13 +54,10 @@ public class PrintAttendance extends VerticalLayout implements HasUrlParameter<S
 	HorizontalLayout exporterLayout = new HorizontalLayout();
 
 	add(exporterLayout);
-
-	ExportData createFor = ExportData.createFor(onDate, getRestService());
-
 	List<Exporter> exporters = Exporter.getExporters();
 	for (Exporter exporter : exporters) {
 	    Button exportButton = new Button(exporter.getName(), VaadinIcon.DOWNLOAD.create());
-	    StreamResource resource = exporter.asResource(createFor);
+	    StreamResource resource = exporter.asResource(onDate, getRestService());
 	    Anchor anchor = new Anchor(resource, null);
 	    anchor.getElement().setAttribute("download", true);
 	    anchor.add(exportButton);

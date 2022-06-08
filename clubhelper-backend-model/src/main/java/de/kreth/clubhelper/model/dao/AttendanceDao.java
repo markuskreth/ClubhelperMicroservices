@@ -13,12 +13,9 @@ public interface AttendanceDao extends CrudRepository<Attendance, Long>, Clubhel
 
     List<Attendance> findByOnDate(LocalDate onDate);
 
-    List<Attendance> findByPerson(Person person);
+    List<Attendance> findByOnDateBetween(LocalDate startDate, LocalDate endDate);
 
     Attendance findByPersonAndOnDate(Person person, LocalDate onDate);
-
-    @Override
-    List<Attendance> findByPersonId(long personId);
 
     List<Attendance> findByChangedGreaterThan(LocalDateTime date);
 }
