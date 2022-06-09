@@ -71,17 +71,17 @@ public class BusinessImpl extends de.kreth.clubhelper.vaadincomponents.remote.Bu
 
     @Override
     public DetailedPerson store(final DetailedPerson bean) {
-	String url;
 	DetailedPerson result;
 	Person origin = cache.get(bean.getId());
 	Person toStore = bean.toPerson(origin);
 
-	url = apiUrl + "/person/" + bean.getId();
-
+	String url;
 	if (bean.getId() < 0) {
+	    url = apiUrl + "/person";
 	    Person postResult = webClient.postForObject(url, toStore, Person.class);
 	    result = DetailedPerson.createFor(postResult);
 	} else {
+	    url = apiUrl + "/person/" + bean.getId();
 	    webClient.put(url, toStore);
 	    result = DetailedPerson.createFor(toStore);
 	}
