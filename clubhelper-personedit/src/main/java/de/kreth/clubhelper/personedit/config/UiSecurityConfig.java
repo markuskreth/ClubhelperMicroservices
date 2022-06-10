@@ -14,11 +14,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @KeycloakConfiguration
 public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
@@ -47,12 +49,33 @@ public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
 	super.configure(http);
-	http.cors().disable()
+
+	http.cors().and()
 		.csrf().disable()
 		.anonymous().disable()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
+//		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
 		.authorizeRequests().requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-		.anyRequest().hasAnyRole("ROLE_trainer", "ROLE_admin");
+		.anyRequest().hasAnyRole("ROLE_trainer", "ROLE_admin")
+		.and().exceptionHandling().accessDeniedPage("/accessDeniedPage");
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+	CorsConfiguration config = new CorsConfiguration();
+	config.setAllowCredentials(true);
+	config.addAllowedOrigin("*");
+	config.addAllowedHeader("*");
+	config.addAllowedMethod("OPTIONS");
+	config.addAllowedMethod("GET");
+	config.addAllowedMethod("POST");
+	config.addAllowedMethod("PUT");
+	config.addAllowedMethod("DELETE");
+	config.applyPermitDefaultValues();
+
+	UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	source.registerCorsConfiguration("*", config);
+//	source.registerCorsConfiguration("/**", config);
+	return new CorsFilter(source);
     }
 
     @Override
