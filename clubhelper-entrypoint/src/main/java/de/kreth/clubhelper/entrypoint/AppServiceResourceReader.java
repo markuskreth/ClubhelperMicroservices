@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,42 +19,51 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(value = "docker.client.enabled", havingValue = "false", matchIfMissing = true)
 public class AppServiceResourceReader implements AppService {
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-	
-	@Value("${resource:./clubhelper.apps.properties}")
-	private String propertyPath;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Override
-	public List<ClubhelperApp> getAllRegisteredApps() {
+    @Value("${resource:./clubhelper.apps.properties}")
+    private String propertyPath;
 
-		File file = new File(propertyPath);
-		logger.info("Loading resource: {}", file.getAbsolutePath());
-		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+    @Override
+    public List<ClubhelperApp> getAllRegisteredApps() {
 
-			return in.lines().filter(l -> !l.isBlank() && !l.startsWith("#") && !l.startsWith(";")).map(this::lineToApp)
-					.collect(Collectors.toList());
+	File file = new File(propertyPath);
+	logger.info("Loading resource: {}", file.getAbsolutePath());
+	try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
+	    return in.lines()
+		    .filter(l -> !l.isBlank())
+		    .map(String::trim)
+		    .filter(l -> !l.startsWith("#"))
+		    .filter(l -> !l.startsWith(";"))
+		    .map(this::lineToApp)
+		    .collect(Collectors.toList());
+
+	} catch (IOException e) {
+	    throw new UncheckedIOException(e);
 	}
+    }
 
-	public String getPropertyPath() {
-		return propertyPath;
+    public String getPropertyPath() {
+	return propertyPath;
+    }
+
+    private ClubhelperApp lineToApp(String line) {
+	String[] values = line.split(";");
+	if (values.length == 2) {
+	    return new ClubhelperApp(values[1], values[0]);
 	}
+	String[] requiredRoles = Arrays.copyOfRange(values, 2, values.length);
+	return new ClubhelperApp(values[1], values[0], requiredRoles);
+    }
 
-	private ClubhelperApp lineToApp(String line) {
-		String[] values = line.split(";");
-		return new ClubhelperApp(values[1], values[0]);
-	}
+    @Override
+    public boolean isEditable() {
+	return true;
+    }
 
-	@Override
-	public boolean isEditable() {
-		return true;
-	}
+    @Override
+    public void update(List<ClubhelperApp> apps) {
 
-	@Override
-	public void update(List<ClubhelperApp> apps) {
-
-	}
+    }
 }
