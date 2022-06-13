@@ -41,6 +41,7 @@ public class MainView extends Div {
 
 	    Object principal = authentication.getPrincipal();
 	    if (principal instanceof KeycloakPrincipal) {
+		@SuppressWarnings("unchecked")
 		KeycloakPrincipal<KeycloakSecurityContext> keycloak = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
 		KeycloakSecurityContext context = keycloak.getKeycloakSecurityContext();
 		AccessToken token = context.getToken();
