@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import de.kreth.clubhelper.data.Adress;
 import de.kreth.clubhelper.data.BaseEntity;
 import de.kreth.clubhelper.data.Contact;
 import de.kreth.clubhelper.data.Person;
@@ -134,5 +135,15 @@ public class BusinessImpl extends de.kreth.clubhelper.vaadincomponents.remote.Bu
 		    + "/" + obj.getId(), storeClass);
 	}
 	return result;
+    }
+
+    @Override
+    public Adress getPersonAdress(Long personid) {
+	String url = apiUrl + "/adress/for/" + personid;
+	Adress[] forObject = webClient.getForObject(url, Adress[].class);
+	if (forObject != null && forObject.length > 0) {
+	    return forObject[0];
+	}
+	return null;
     }
 }

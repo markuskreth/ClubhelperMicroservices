@@ -22,11 +22,12 @@ import de.kreth.clubhelper.data.Contact;
 import de.kreth.clubhelper.data.ContactType;
 import de.kreth.clubhelper.personedit.data.DetailedPerson;
 import de.kreth.clubhelper.personedit.remote.Business;
+import de.kreth.clubhelper.personedit.ui.PersonEditorComponent;
 import de.kreth.clubhelper.personedit.ui.components.StoreConfimeListener;
 import de.kreth.clubhelper.personedit.ui.components.StoreConfirmedEvent;
 import de.kreth.clubhelper.vaadincomponents.dialog.ConfirmDialog;
 
-public class PersonContact extends Div {
+public class PersonContact extends Div implements PersonEditorComponent {
 
     private static final long serialVersionUID = 8808238171339285576L;
     private Business restService;

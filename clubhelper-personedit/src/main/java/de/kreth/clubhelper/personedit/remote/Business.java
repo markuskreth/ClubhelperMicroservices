@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.security.core.Authentication;
 
+import de.kreth.clubhelper.data.Adress;
 import de.kreth.clubhelper.data.BaseEntity;
 import de.kreth.clubhelper.data.Contact;
 import de.kreth.clubhelper.data.GroupDef;
@@ -28,6 +29,8 @@ public interface Business {
     void delete(DetailedPerson personDetails, Contact contact);
 
     List<PersonNote> getPersonNotes(Long personId);
+
+    Adress getPersonAdress(Long personid);
 
     /*
      * Contact Related

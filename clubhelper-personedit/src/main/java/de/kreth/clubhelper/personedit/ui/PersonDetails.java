@@ -29,123 +29,121 @@ import de.kreth.clubhelper.personedit.data.Gender;
 import de.kreth.clubhelper.personedit.data.PersonValidator;
 import de.kreth.clubhelper.personedit.remote.Business;
 
-public class PersonDetails extends Div {
+public class PersonDetails extends Div implements PersonEditorComponent {
 
-	private static final long serialVersionUID = 1131361447618666217L;
-	
-	private final List<GroupDef> groups;
-	private final Business restService;
-	private DetailedPerson personDetails;
-	
-	private TextField startPass;
-	private DatePicker birthday;
-	private ComboBox<Gender> gender;
+    private static final long serialVersionUID = 1131361447618666217L;
 
-	private CheckboxGroup<GroupDef> groupComponent;
+    private final List<GroupDef> groups;
+    private DetailedPerson personDetails;
 
-	private Binder<DetailedPerson> binder;
+    private TextField startPass;
+    private DatePicker birthday;
+    private ComboBox<Gender> gender;
 
-	public PersonDetails(Business restService, Binder<DetailedPerson> binder) {
+    private CheckboxGroup<GroupDef> groupComponent;
 
-		this.groups = new ArrayList<>();
-		this.binder = binder;
-		this.restService = restService;
-		this.groups.addAll(restService.getAllGroups());
-		
-		startPass = new TextField();
-		startPass.setAutocapitalize(Autocapitalize.CHARACTERS);
-		startPass.setValueChangeMode(ValueChangeMode.EAGER);
-		startPass.setEnabled(false);
-		Button startpassButton = new Button(VaadinIcon.PENCIL.create(), ev -> openStartpassEditor());
+    private Binder<DetailedPerson> binder;
 
-		birthday = new DatePicker() {
-			private static final long serialVersionUID = 4447836207485665873L;
+    public PersonDetails(Business restService, Binder<DetailedPerson> binder) {
 
-			@Override
-			public LocalDate getEmptyValue() {
-				return LocalDate.of(2000, 6, 1);
-			}
-		};
-		gender = new ComboBox<>();
-		gender.setItems(Gender.values());
-		gender.setRenderer(new TextRenderer<>(new GenderItemLabelGenerator()));
-		gender.setItemLabelGenerator(new GenderItemLabelGenerator());
-		gender.setAllowCustomValue(false);
+	this.groups = new ArrayList<>();
+	this.binder = binder;
+	this.groups.addAll(restService.getAllGroups());
 
-		groupComponent = new CheckboxGroup<>();
-		groupComponent.addThemeVariants(CheckboxGroupVariant.LUMO_VERTICAL);
+	startPass = new TextField();
+	startPass.setAutocapitalize(Autocapitalize.CHARACTERS);
+	startPass.setValueChangeMode(ValueChangeMode.EAGER);
+	startPass.setEnabled(false);
+	Button startpassButton = new Button(VaadinIcon.PENCIL.create(), ev -> openStartpassEditor());
 
-		groupComponent.setItemLabelGenerator(i -> i.getName() );
-		groupComponent.setDataProvider(DataProvider.ofCollection(groups));
+	birthday = new DatePicker() {
+	    private static final long serialVersionUID = 4447836207485665873L;
 
-		FormLayout layoutWithFormItems = new FormLayout();
+	    @Override
+	    public LocalDate getEmptyValue() {
+		return LocalDate.of(2000, 6, 1);
+	    }
+	};
+	gender = new ComboBox<>();
+	gender.setItems(Gender.values());
+	gender.setRenderer(new TextRenderer<>(new GenderItemLabelGenerator()));
+	gender.setItemLabelGenerator(new GenderItemLabelGenerator());
+	gender.setAllowCustomValue(false);
 
-		layoutWithFormItems.addFormItem(birthday, "Geburtstag");
-		layoutWithFormItems.addFormItem(gender, "Geschlecht");
-		layoutWithFormItems.addFormItem(groupComponent, "Gruppen");
-		layoutWithFormItems.addFormItem(new HorizontalLayout(startPass, startpassButton), "Startpassnummer");
-		
-		add(layoutWithFormItems);
-		groupComponent.getDataProvider().refreshAll();
+	groupComponent = new CheckboxGroup<>();
+	groupComponent.addThemeVariants(CheckboxGroupVariant.LUMO_VERTICAL);
+
+	groupComponent.setItemLabelGenerator(i -> i.getName());
+	groupComponent.setDataProvider(DataProvider.ofCollection(groups));
+
+	FormLayout layoutWithFormItems = new FormLayout();
+
+	layoutWithFormItems.addFormItem(birthday, "Geburtstag");
+	layoutWithFormItems.addFormItem(gender, "Geschlecht");
+	layoutWithFormItems.addFormItem(groupComponent, "Gruppen");
+	layoutWithFormItems.addFormItem(new HorizontalLayout(startPass, startpassButton), "Startpassnummer");
+
+	add(layoutWithFormItems);
+	groupComponent.getDataProvider().refreshAll();
+    }
+
+    @Override
+    public void init(DetailedPerson personDetails) {
+	this.personDetails = personDetails;
+    }
+
+    public void setupNewPersonGroups(Person newPerson) {
+	newPerson.getGroups().add(this.groups.get(0));
+    }
+
+    private void openStartpassEditor() {
+	if (personDetails.getStartpass() != null) {
+	    personDetails.setStartpass(new Startpass());
 	}
-	
-	public void init(DetailedPerson personDetails) {
-		this.personDetails = personDetails;
-	}
+	StartpassEditor startpassEditor = new StartpassEditor(personDetails.getStartpass());
+	startpassEditor.open();
+    }
 
-	public void setupNewPersonGroups(Person newPerson) {
-		newPerson.getGroups().add(this.groups.get(0));
-	}
-	
-	private void openStartpassEditor() {
-		if (personDetails.getStartpass() != null) {
-			personDetails.setStartpass(new Startpass());
-		}
-		StartpassEditor startpassEditor = new StartpassEditor(personDetails.getStartpass());
-		startpassEditor.open();
-	}
+    public void configBinder(PersonValidator validator) {
+	binder.forField(birthday).withValidator(validator::validateBirthday).bind(DetailedPerson::getBirth,
+		DetailedPerson::setBirth);
 
-	public void configBinder(PersonValidator validator) {
-		binder.forField(birthday).withValidator(validator::validateBirthday).bind(DetailedPerson::getBirth,
-				DetailedPerson::setBirth);
+	binder.forField(gender).bind(DetailedPerson::getGenderObject, DetailedPerson::setGenderObject);
+	binder.forField(startPass).withValidator(validator::validateStartpass).bind(this::getStartPassNr,
+		this::setStartpassNr);
+	binder.forField(groupComponent).withValidator(validator::validateGroup)
+		.bind(this::getGroups, this::setGroups);
 
-		binder.forField(gender).bind(DetailedPerson::getGenderObject, DetailedPerson::setGenderObject);
-		binder.forField(startPass).withValidator(validator::validateStartpass).bind(this::getStartPassNr,
-				this::setStartpassNr);
-		binder.forField(groupComponent).withValidator(validator::validateGroup)
-				.bind(this::getGroups, this::setGroups);
+    }
 
+    private Set<GroupDef> getGroups(DetailedPerson person) {
+	return person.getGroups();
+    }
+
+    private void setGroups(DetailedPerson person, Set<GroupDef> groups) {
+	if (person.getGroups() == null) {
+	    person.setGroups(groups);
+	} else {
+	    person.getGroups().clear();
+	    person.getGroups().addAll(groups);
 	}
+    }
 
-	private Set<GroupDef> getGroups(DetailedPerson person) {
-		return person.getGroups();
+    private void setStartpassNr(DetailedPerson person, String numer) {
+	Startpass startpass = person.getStartpass();
+	if (startpass == null) {
+	    startpass = new Startpass();
+	    person.setStartpass(startpass);
 	}
+	startpass.setStartpassNr(numer);
+    }
 
-	private void setGroups(DetailedPerson person, Set<GroupDef> groups) {
-		if (person.getGroups() == null) {
-			person.setGroups(groups);
-		} else {
-			person.getGroups().clear();
-			person.getGroups().addAll(groups);
-		}
+    private String getStartPassNr(DetailedPerson p) {
+	Startpass startpass = p.getStartpass();
+	if (startpass == null) {
+	    return "";
 	}
-
-	private void setStartpassNr(DetailedPerson person, String numer) {
-		Startpass startpass = person.getStartpass();
-		if (startpass == null) {
-			startpass = new Startpass();
-			person.setStartpass(startpass);
-		}
-		startpass.setStartpassNr(numer);
-	}
-
-	private String getStartPassNr(DetailedPerson p) {
-		Startpass startpass = p.getStartpass();
-		if (startpass == null) {
-			return "";
-		} else {
-			return startpass.getStartpassNr();
-		}
-	}
+	return startpass.getStartpassNr();
+    }
 
 }

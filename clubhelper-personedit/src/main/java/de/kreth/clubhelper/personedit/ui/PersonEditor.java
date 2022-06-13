@@ -49,6 +49,7 @@ public class PersonEditor extends Div implements HasUrlParameter<Long>, BeforeLe
     private PersonDetails details;
     private PersonContact contacts;
     private PersonNotes notes;
+    private PersonAdress adress;
 
     private Button store;
 
@@ -84,6 +85,7 @@ public class PersonEditor extends Div implements HasUrlParameter<Long>, BeforeLe
 	details = new PersonDetails(restService, binder);
 	contacts = new PersonContact(restService);
 	notes = new PersonNotes(restService);
+	adress = new PersonAdress(restService);
 
 	layoutWithFormItems.addFormItem(prename, "Vorname");
 	layoutWithFormItems.addFormItem(surname, "Nachname");
@@ -93,6 +95,7 @@ public class PersonEditor extends Div implements HasUrlParameter<Long>, BeforeLe
 	Accordion accordion = new Accordion();
 	datailsAccordionPanel = accordion.add("Personendetails", details);
 	accordion.add("Kontakte", contacts);
+	accordion.add("Adresse", adress);
 	accordion.add("Notizen", notes);
 	accordion.addOpenedChangeListener(new AccordionChangeListener());
 	accordion.open(0);
@@ -188,6 +191,7 @@ public class PersonEditor extends Div implements HasUrlParameter<Long>, BeforeLe
 	    details.init(personDetails);
 	    contacts.init(personDetails);
 	    notes.init(personDetails);
+	    adress.init(personDetails);
 
 	    binder.readBean(personDetails);
 	    binder.validate();
@@ -210,8 +214,10 @@ public class PersonEditor extends Div implements HasUrlParameter<Long>, BeforeLe
 			} else if (notes.hasUnsavedChanges()) {
 			    notes.storeChanges();
 			}
-		    }).withCancelButton("Abbrechen", ev -> {
-		    }).withRejectButton("Änderungen verwerfen", ev -> postpone.proceed()).open();
+		    })
+		    .withCancelButton("Abbrechen", ev -> {
+		    })
+		    .withRejectButton("Änderungen verwerfen", ev -> postpone.proceed()).open();
 	}
 
     }

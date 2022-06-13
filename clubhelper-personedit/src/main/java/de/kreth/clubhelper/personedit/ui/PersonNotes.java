@@ -30,7 +30,7 @@ import de.kreth.clubhelper.personedit.data.DetailedPerson;
 import de.kreth.clubhelper.personedit.remote.Business;
 import de.kreth.clubhelper.personedit.ui.components.WithUnsavedChangesSupport;
 
-public class PersonNotes extends Div implements WithUnsavedChangesSupport {
+public class PersonNotes extends Div implements WithUnsavedChangesSupport, PersonEditorComponent {
 
     private static final long serialVersionUID = -9204751115060749706L;
     private final Business restService;
@@ -116,6 +116,7 @@ public class PersonNotes extends Div implements WithUnsavedChangesSupport {
 	storeButton.setEnabled(noteTextChanged.get());
     }
 
+    @Override
     public void init(DetailedPerson personDetails) {
 	notes.clear();
 	this.personDetails = personDetails;

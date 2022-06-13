@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * The persistent class for the adress database table.
- * 
+ *
  */
 public class Adress extends BaseEntity implements Serializable {
 
@@ -52,7 +52,8 @@ public class Adress extends BaseEntity implements Serializable {
 
     @Override
     public String toString() {
-	return "Adress [adress1=" + adress1 + ", adress2=" + adress2 + ", plz=" + plz + ", city=" + city + "]";
+	return "Adress [id=" + getId()
+		+ ", adress1=" + adress1 + ", adress2=" + adress2 + ", plz=" + plz + ", city=" + city + "]";
     }
 
 }
