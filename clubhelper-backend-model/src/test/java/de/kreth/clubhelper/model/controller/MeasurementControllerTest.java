@@ -17,8 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.adapters.springboot.KeycloakAutoConfiguration;
 import org.keycloak.adapters.springboot.KeycloakBaseSpringBootConfiguration;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -52,7 +50,8 @@ class MeasurementControllerTest {
 
     private LocalDateTime onDate;
 
-    private Measurement measurement;
+    private Measurement measurement1;
+    private Measurement measurement2;
 
     private Person person;
 
@@ -68,13 +67,21 @@ class MeasurementControllerTest {
 //	person.setCreated(created);
 //	person.setChanged(created);
 
-	measurement = new Measurement();
-	measurement.setId(1);
-	measurement.setPerson(person);
-	measurement.setMeasurementType(MeasurementType.JumpHeightSeconds);
-	measurement.setClassification("10 Strecksprünge");
-	measurement.setOnTime(onDate);
-	measurement.setMeasured(17.3);
+	measurement1 = new Measurement();
+	measurement1.setId(1);
+	measurement1.setPerson(person);
+	measurement1.setMeasurementType(MeasurementType.JumpHeightSeconds);
+	measurement1.setClassification("10 Strecksprünge");
+	measurement1.setOnTime(onDate);
+	measurement1.setMeasured(17.3);
+
+	measurement2 = new Measurement();
+	measurement2.setId(2);
+	measurement2.setPerson(person);
+	measurement2.setMeasurementType(MeasurementType.JumpHeightSeconds);
+	measurement2.setClassification("10 Strecksprünge");
+	measurement2.setOnTime(onDate.plusDays(2));
+	measurement2.setMeasured(16.3);
 
     }
 
@@ -98,25 +105,23 @@ class MeasurementControllerTest {
     void callMeasurementListOne() throws Exception {
 
 	List<Measurement> asList = new ArrayList<>();
-	asList.add(measurement);
+	asList.add(measurement1);
+	asList.add(measurement2);
 
-	when(measurementDao.findByPersonId(person.getId())).thenAnswer(new Answer<List<Measurement>>() {
-
-	    @Override
-	    public List<Measurement> answer(InvocationOnMock invocation) throws Throwable {
-		return asList;
-	    }
-	});
+	when(measurementDao.findByPersonId(person.getId())).thenAnswer(i -> asList);
 	StringWriter writer = new StringWriter();
-	objectMapper.writeValue(writer, measurement);
+	objectMapper.writeValue(writer, measurement1);
 
 	mvc.perform(get("/measurement/for/" + person.getId()))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(ContentType.APPLICATION_JSON.getMimeType()))
 		.andExpect(content().json(
-			"{\"id\":1,\"changed\":null,\"created\":null,\"deleted\":null,\"onTime\":\"2022-04-01T18:55:13\","
+			"[{\"id\":1,\"changed\":null,\"created\":null,\"deleted\":null,\"onTime\":\"2022-04-01T18:55:13\","
 				+ "\"measurementType\":\"JumpHeightSeconds\","
-				+ "\"classification\":\"10 Strecksprünge\",\"measured\":17.3}",
+				+ "\"classification\":\"10 Strecksprünge\",\"measured\":17.3},"
+				+ "{\"id\":2,\"changed\":null,\"created\":null,\"deleted\":null,\"onTime\":\"2022-04-03T18:55:13\","
+				+ "\"measurementType\":\"JumpHeightSeconds\","
+				+ "\"classification\":\"10 Strecksprünge\",\"measured\":16.3}]",
 			true));
     }
 
