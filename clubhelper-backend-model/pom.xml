@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>de.kreth.clubhelper</groupId>
 		<artifactId>clubhelper.parent</artifactId>
-		<version>0.3.1-SNAPSHOT</version>
+		<version>0.3.1</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -104,5 +104,6 @@
 		<url>scm:git:https://github.com/markuskreth/clubhelper_backend_model.git</url>
 		<developerConnection>scm:git:https://github.com/markuskreth/clubhelper_backend_model.git</developerConnection>
 		<connection>scm:git:https://github.com/markuskreth/clubhelper_backend_model.git</connection>
+    <tag>clubhelper.parent-0.3.1</tag>
   </scm>
 </project>
