@@ -60,247 +60,246 @@ import de.kreth.clubhelper.vaadincomponents.groupfilter.GroupFilterListener;
 @PageTitle("Anwesenheit")
 @PreAuthorize("hasRole('ROLE_trainer')")
 public class AttendanceView extends VerticalLayout
-		implements ValueChangeListener<ComponentValueChangeEvent<TextField, String>>, GroupFilterListener {
+	implements ValueChangeListener<ComponentValueChangeEvent<TextField, String>>, GroupFilterListener {
 
-	final Logger logger = LoggerFactory.getLogger(getClass());
-	
-	private static final long serialVersionUID = 1L;
+    final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private String personeditorUrl;
+    private static final long serialVersionUID = 1L;
 
-	private final PersonUiList personList;
+    private String personeditorUrl;
 
-	private DatePicker date;
+    private final PersonUiList personList;
 
-	private Label attendanceSum;
-	
-	private final AtomicInteger attendanceCount = new AtomicInteger();
+    private DatePicker date;
 
-	private Business restService;
+    private Label attendanceSum;
 
-	public AttendanceView(@Value("${personeditor.url}") String personeditorUrl, @Autowired Business restService) {
-		this.personeditorUrl = personeditorUrl;
-		this.restService = restService;
-		LoggerFactory.getLogger(getClass()).info("Using PersonEditor URL: " + personeditorUrl);
-		personList = new PersonUiList();
-		createUi();
-		refreshData();
-		updateSum();
-		logger.info(getClass().getName() + " gestartet.");
+    private final AtomicInteger attendanceCount = new AtomicInteger();
+
+    private Business restService;
+
+    public AttendanceView(@Value("${personeditor.url}") String personeditorUrl, @Autowired Business restService) {
+	this.personeditorUrl = personeditorUrl;
+	this.restService = restService;
+	LoggerFactory.getLogger(getClass()).info("Using PersonEditor URL: " + personeditorUrl);
+	personList = new PersonUiList();
+	createUi();
+	refreshData();
+	updateSum();
+	logger.info(getClass().getName() + " gestartet.");
+    }
+
+    private void createUi() {
+	add(new H1("Anwesenheit"));
+
+	date = new DatePicker(LocalDate.now());
+	date.setLabel("Anwesenheit Datum");
+	date.setRequired(true);
+	date.setLocale(Locale.getDefault());
+
+	TextField filter = new TextField("Filter des Vor- oder Nachnamens");
+	filter.setPlaceholder("Filter nach Name...");
+	filter.setClearButtonVisible(true);
+	filter.addValueChangeListener(this);
+	filter.setValueChangeMode(ValueChangeMode.TIMEOUT);
+	filter.setValueChangeTimeout(700);
+
+	GroupFilter groupFilter = new GroupFilter(restService.getAllGroups());
+	groupFilter.addListener(this);
+
+	ComboBox<PersonSort> sorting = new ComboBox<>("Sortierung") {
+
+	    private static final long serialVersionUID = -3767819950249464482L;
+
+	    @Override
+	    public PersonSort getEmptyValue() {
+		return PersonSort.None;
+	    }
+	};
+	sorting.setItems(PersonSort.values());
+	sorting.setValue(PersonSort.None);
+
+	Grid<PersonAttendance> grid = new Grid<>();
+	Column<PersonAttendance> attendanceCol = grid.addColumn(new ComponentRenderer<>(this::attendanteComponent));
+	grid.addItemClickListener(this::showItemText);
+	grid.setMinHeight("400px");
+	attendanceSum = new Label();
+	attendanceSum.getElement().addEventListener("click", this::showText);
+	FooterRow footerRow = grid.appendFooterRow();
+	footerRow.getCell(attendanceCol).setComponent(attendanceSum);
+
+	grid.setDataProvider(personList.getDataProvider());
+
+	Button printButton = new Button(VaadinIcon.PRINT.create());
+	printButton.addClickListener(e -> printButton.getUI().ifPresent(
+		ui -> ui.navigate(PrintAttendance.class, date.getValue().format(DateTimeFormatter.BASIC_ISO_DATE))));
+	FlexLayout dateAndPrint = new FlexLayout(date, printButton);
+
+	dateAndPrint.setFlexDirection(FlexDirection.ROW);
+	dateAndPrint.setAlignItems(Alignment.START);
+	dateAndPrint.setFlexWrap(FlexWrap.WRAP);
+	dateAndPrint.setAlignContent(ContentAlignment.START);
+	dateAndPrint.setAlignSelf(Alignment.END, printButton);
+
+	FlexLayout sortAndFilter = new FlexLayout(sorting, filter);
+
+	sortAndFilter.setFlexDirection(FlexDirection.ROW);
+	sortAndFilter.setAlignItems(Alignment.START);
+	sortAndFilter.setFlexWrap(FlexWrap.WRAP);
+	sortAndFilter.setAlignContent(ContentAlignment.START);
+	sortAndFilter.setAlignSelf(Alignment.END, printButton);
+
+	add(dateAndPrint, groupFilter, sortAndFilter, grid);
+
+	setSizeFull();
+	expand(grid);
+
+	date.addValueChangeListener(ev -> refreshData());
+	sort(PersonSort.None);
+	sorting.addValueChangeListener(ev -> sort(ev.getValue()));
+	add(new FooterComponent());
+    }
+
+    void sort(final PersonSort order) {
+	personList.sort(p -> new PersonAttendanceComparable(p, order));
+    }
+
+    void showItemText(ItemClickEvent<PersonAttendance> event) {
+	PersonAttendance item = event.getItem();
+	String text = item.getPrename() + " " + item.getSurname();
+	logger.debug("Notification für " + item);
+	Notification.show(text);
+    }
+
+    void showText(DomEvent ev) {
+	String text = ev.getSource().getText();
+	logger.debug("Notification für " + ev.getSource() + ": ");
+	Notification.show(text);
+    }
+
+    Button createEditorButton(PersonAttendance p) {
+	Button b = new Button(VaadinIcon.PENCIL.create());
+	b.addClickListener(ev -> this.onClick(p.getId()));
+	b.getElement().setProperty("title", "Editor für " + p.getSurname() + ", " + p.getPrename());
+	b.addClassName("BUTTON_LINK");
+	return b;
+    }
+
+    private void onClick(Long personId) {
+	logger.info("Opening Editor für Id=" + personId);
+	getUI().ifPresent(ui -> {
+	    Page page = ui.getPage();
+	    String url = editUrlForPersonId(personId);
+	    page.open(url, "_self");
+	});
+    }
+
+    private String editUrlForPersonId(Long personId) {
+	return this.personeditorUrl + "/" + personId;
+    }
+
+    private boolean withEditor() {
+	return !"NONE".equals(personeditorUrl);
+    }
+
+    @Override
+    public void valueChanged(ComponentValueChangeEvent<TextField, String> event) {
+	StringBuilder logText = new StringBuilder();
+	logText.append("Filtering by Name: " + event.getValue());
+	logger.info(logText.toString());
+	personList.setFilterText(event.getValue());
+    }
+
+    private Component attendanteComponent(PersonAttendance person) {
+
+	Checkbox box = new Checkbox();
+	box.setValue(person.isAttendante());
+	box.addValueChangeListener(ev -> sendPersonAttendance(person, ev));
+	Label name = new Label(person.getPrename() + " " + person.getSurname());
+	HorizontalLayout layout = new HorizontalLayout(box, name);
+
+	if (withEditor()) {
+	    ContextMenu menu = new ContextMenu(layout);
+	    menu.addItem(new Button(VaadinIcon.PENCIL.create()), ev -> this.onClick(person.getId()));
 	}
 
-	private void createUi() {
-		add(new H1("Anwesenheit"));
+	return layout;
+    }
 
-		date = new DatePicker(LocalDate.now());
-		date.setLabel("Anwesenheit Datum");
-		date.setRequired(true);
-		date.setLocale(Locale.getDefault());
+    private void sendPersonAttendance(PersonAttendance person, ComponentValueChangeEvent<Checkbox, Boolean> ev) {
 
-		TextField filter = new TextField("Filter des Vor- oder Nachnamens");
-		filter.setPlaceholder("Filter nach Name...");
-		filter.setClearButtonVisible(true);
-		filter.addValueChangeListener(this);
-		filter.setValueChangeMode(ValueChangeMode.TIMEOUT);
-		filter.setValueChangeTimeout(700);
-		
-		GroupFilter groupFilter = new GroupFilter(restService.getAllGroups());
-		groupFilter.addListener(this);
+	Boolean selected = ev.getValue();
+	LocalDate attendanceDate = date.getValue();
+	logger.info("Changing Attendance Value for " + person + " to " + selected);
+	try {
 
-		ComboBox<PersonSort> sorting = new ComboBox<>("Sortierung") {
-			
-			private static final long serialVersionUID = -3767819950249464482L;
+	    PersonAttendance result = restService.sendAttendance(person, attendanceDate, selected);
 
-			@Override
-			public PersonSort getEmptyValue() {
-				return PersonSort.None;
-			}
-		};
-		sorting.setItems(PersonSort.values());
-		sorting.setValue(PersonSort.None);
-		
-		Grid<PersonAttendance> grid = new Grid<>();
-		Column<PersonAttendance> attendanceCol = grid.addColumn(new ComponentRenderer<>(this::attendanteComponent));
-		grid.addItemClickListener(this::showItemText);
-		grid.setMinHeight("400px");
-		attendanceSum = new Label();
-		attendanceSum.getElement().addEventListener("click", this::showText);
-		FooterRow footerRow = grid.appendFooterRow();
-		footerRow.getCell(attendanceCol).setComponent(attendanceSum);
+	    personList.update(result);
 
-		grid.setDataProvider(personList.getDataProvider());
+	    if (selected.booleanValue()) {
+		attendanceCount.incrementAndGet();
+	    } else {
+		attendanceCount.decrementAndGet();
+	    }
+	    updateSum();
+	} catch (Exception e) {
+	    logger.error("Error sending " + person, e);
+	    refreshData();
+	}
+    }
 
-		Button printButton = new Button(VaadinIcon.PRINT.create());
-		printButton.addClickListener(e -> printButton.getUI().ifPresent(
-				ui -> ui.navigate(PrintAttendance.class, date.getValue().format(DateTimeFormatter.BASIC_ISO_DATE))));
-		FlexLayout dateAndPrint = new FlexLayout(date, printButton);
+    private void refreshData() {
+	List<PersonAttendance> attendanceAsJson = restService.getAttendance(date.getValue());
+	personList.setPersons(attendanceAsJson);
 
-		dateAndPrint.setFlexDirection(FlexDirection.ROW);
-		dateAndPrint.setAlignItems(Alignment.START);
-		dateAndPrint.setFlexWrap(FlexWrap.WRAP);
-		dateAndPrint.setAlignContent(ContentAlignment.START);
-		dateAndPrint.setAlignSelf(Alignment.END, printButton);
+	attendanceCount.set((int) attendanceAsJson.stream().filter(PersonAttendance::isAttendante).count());
+	updateSum();
+	logger.info("Refreshed View.");
+    }
 
-		FlexLayout sortAndFilter = new FlexLayout(sorting, filter);
+    private void updateSum() {
+	attendanceSum.setText("Anwesend: " + attendanceCount.get());
+    }
 
-		sortAndFilter.setFlexDirection(FlexDirection.ROW);
-		sortAndFilter.setAlignItems(Alignment.START);
-		sortAndFilter.setFlexWrap(FlexWrap.WRAP);
-		sortAndFilter.setAlignContent(ContentAlignment.START);
-		sortAndFilter.setAlignSelf(Alignment.END, printButton);
+    @Override
+    public void groupFilterChange(GroupFilterEvent event) {
+	personList.setFilterGroups(event.getFilteredGroups());
+    }
 
-		add(dateAndPrint, groupFilter, sortAndFilter, grid);
+    class PersonAttendanceComparable implements Comparable<PersonAttendanceComparable> {
 
-		setSizeFull();
-		expand(grid);
+	final PersonAttendance toCompare;
+	final PersonSort order;
 
-		date.addValueChangeListener(ev -> refreshData());
-		sort(PersonSort.None);
-		sorting.addValueChangeListener(ev -> sort(ev.getValue()));
+	public PersonAttendanceComparable(PersonAttendance toCompare) {
+	    this(toCompare, PersonSort.None);
 	}
 
-	void sort (final PersonSort order) {
-		personList.sort(p -> new PersonAttendanceComparable(p, order));
-	}
-	
-	void showItemText(ItemClickEvent<PersonAttendance> event) {
-		PersonAttendance item = event.getItem();
-		String text = item.getPrename() + " " + item.getSurname();
-		logger.debug("Notification für " + item);
-		Notification.show(text);
-	}
-	
-	void showText(DomEvent ev) {
-		String text = ev.getSource().getText();
-		logger.debug("Notification für " + ev.getSource() + ": ");
-		Notification.show(text);
-	}
-	
-	Button createEditorButton(PersonAttendance p) {
-		Button b = new Button(VaadinIcon.PENCIL.create());
-		b.addClickListener(ev -> this.onClick(p.getId()));
-		b.getElement().setProperty("title", "Editor für " + p.getSurname() + ", " + p.getPrename());
-		b.addClassName("BUTTON_LINK");
-		return b;
-	}
-
-	private void onClick(Long personId) {
-		logger.info("Opening Editor für Id=" + personId);
-		getUI().ifPresent(ui -> {
-			Page page = ui.getPage();
-			String url = editUrlForPersonId(personId);
-			page.open(url, "_self");
-		});
-	}
-
-	private String editUrlForPersonId(Long personId) {
-		return this.personeditorUrl + "/" + personId;
-	}
-
-	private boolean withEditor() {
-		return !"NONE".equals(personeditorUrl);
+	public PersonAttendanceComparable(PersonAttendance toCompare, PersonSort order) {
+	    super();
+	    this.toCompare = toCompare;
+	    this.order = Objects.requireNonNull(order);
 	}
 
 	@Override
-	public void valueChanged(ComponentValueChangeEvent<TextField, String> event) {
-		StringBuilder logText = new StringBuilder();
-		logText.append("Filtering by Name: " + event.getValue());
-		logger.info(logText.toString());
-		personList.setFilterText(event.getValue());
-	}
-	
-	private Component attendanteComponent(PersonAttendance person) {
-
-		Checkbox box = new Checkbox();
-		box.setValue(person.isAttendante());
-		box.addValueChangeListener(ev -> sendPersonAttendance(person, ev));
-		Label name = new Label(person.getPrename() + " " + person.getSurname());
-		HorizontalLayout layout = new HorizontalLayout(box, name);
-		
-		if (withEditor()) {
-			ContextMenu menu = new ContextMenu(layout);			
-			menu.addItem(new Button(VaadinIcon.PENCIL.create()), ev -> this.onClick(person.getId()));
+	public int compareTo(PersonAttendanceComparable o) {
+	    if (toCompare.isAttendante() != o.toCompare.isAttendante()) {
+		return Boolean.compare(o.toCompare.isAttendante(), toCompare.isAttendante());
+	    }
+	    switch (order) {
+	    case ByPrename:
+		return toCompare.getPrename().compareTo(o.toCompare.getPrename());
+	    case BySurname:
+		return toCompare.getSurname().compareTo(o.toCompare.getSurname());
+	    default:
+		if (toCompare.getId() != null) {
+		    return toCompare.getId().compareTo(o.toCompare.getId());
+		} else {
+		    return 0;
 		}
-		
-		return layout;
+	    }
 	}
 
-	private void sendPersonAttendance(PersonAttendance person, ComponentValueChangeEvent<Checkbox, Boolean> ev) {
-		
-		Boolean selected = ev.getValue();
-		LocalDate attendanceDate = date.getValue();
-		logger.info("Changing Attendance Value for " + person + " to " + selected);
-		try {
-
-			PersonAttendance result = restService.sendAttendance(person, attendanceDate, selected);
-
-			personList.update(result);
-
-			if (selected.booleanValue()) {
-				attendanceCount.incrementAndGet();
-			} else {
-				attendanceCount.decrementAndGet();
-			}
-			updateSum();
-		} catch (Exception e) {
-			logger.error("Error sending " + person, e);
-			refreshData();
-		}
-	}
-
-	private void refreshData() {
-		List<PersonAttendance> attendanceAsJson = restService.getAttendance(date.getValue());
-		personList.setPersons(attendanceAsJson);
-
-		attendanceCount.set((int) attendanceAsJson.stream().filter(PersonAttendance::isAttendante).count());
-		updateSum();
-		logger.info("Refreshed View.");
-	}
-
-	private void updateSum() {
-		attendanceSum.setText("Anwesend: " + attendanceCount.get());
-	}
-
-	@Override
-	public void groupFilterChange(GroupFilterEvent event) {
-		personList.setFilterGroups(event.getFilteredGroups());
-	}
-
-	class PersonAttendanceComparable implements Comparable<PersonAttendanceComparable> {
-
-		final PersonAttendance toCompare;
-		final PersonSort order;
-
-		public PersonAttendanceComparable(PersonAttendance toCompare) {
-			this(toCompare, PersonSort.None);
-		}
-
-		public PersonAttendanceComparable(PersonAttendance toCompare, PersonSort order) {
-			super();
-			this.toCompare = toCompare;
-			this.order = Objects.requireNonNull(order);
-		}
-
-		@Override
-		public int compareTo(PersonAttendanceComparable o) {
-			if (toCompare.isAttendante() == o.toCompare.isAttendante()) {
-				switch (order) {
-				case ByPrename:
-					return toCompare.getPrename().compareTo(o.toCompare.getPrename());
-				case BySurname:
-					return toCompare.getSurname().compareTo(o.toCompare.getSurname());
-				default:
-					if (toCompare.getId() != null) {
-						return toCompare.getId().compareTo(o.toCompare.getId());
-					}
-					else {
-						return 0;
-					}
-				}
-			} else {
-				return Boolean.compare(o.toCompare.isAttendante(), toCompare.isAttendante());
-			}
-		}
-		
-	}
+    }
 }

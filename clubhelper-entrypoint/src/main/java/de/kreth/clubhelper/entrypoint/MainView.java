@@ -59,5 +59,6 @@ public class MainView extends Div {
 
 	apps.addAll(allRegisteredApps);
 	apps.stream().map(ClubhelperAppButton::new).forEach(MainView.this::add);
+	add(new FooterComponent());
     }
 }

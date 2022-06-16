@@ -25,6 +25,7 @@ import com.vaadin.flow.router.Route;
 
 import de.kreth.clubhelper.data.Person;
 import de.kreth.clubhelper.personedit.remote.Business;
+import de.kreth.clubhelper.personedit.ui.components.FooterComponent;
 import de.kreth.clubhelper.vaadincomponents.groupfilter.GroupFilter;
 import de.kreth.clubhelper.vaadincomponents.groupfilter.GroupFilterEvent;
 import de.kreth.clubhelper.vaadincomponents.groupfilter.GroupFilterListener;
@@ -85,6 +86,7 @@ public class MainView extends VerticalLayout
 	add(filter);
 	add(grid);
 
+	add(new FooterComponent());
     }
 
     @Override

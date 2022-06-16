@@ -100,6 +100,15 @@
 
 	<build>
 		<defaultGoal>spring-boot:run</defaultGoal>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>${basedir}/src/packaging</directory>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

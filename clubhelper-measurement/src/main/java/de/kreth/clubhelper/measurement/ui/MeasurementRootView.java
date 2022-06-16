@@ -18,6 +18,8 @@ public class MeasurementRootView extends PersonListView<PersonMeasurementOvervie
 
     public MeasurementRootView(@Autowired MeasurementBusiness measurementBusiness) {
 	super(measurementBusiness, PersonMeasurementOverviewView.class);
+
+	add(new FooterComponent());
     }
 
 }
