@@ -2,12 +2,14 @@ package de.kreth.clubhelper.entrypoint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vaadin.flow.component.dependency.CssImport;
@@ -37,6 +39,24 @@ public class MainView extends Div {
 	this.removeAll();
 
 	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	showUserInformation(authentication);
+	apps.clear();
+	List<ClubhelperApp> allRegisteredApps = service.getAllRegisteredApps();
+
+	apps.addAll(allRegisteredApps);
+
+	List<String> roles = authentication.getAuthorities().stream()
+		.map(GrantedAuthority::getAuthority)
+		.collect(Collectors.toList());
+
+	apps.stream()
+		.filter(a -> filterByAuthentication(a, roles))
+		.map(ClubhelperAppButton::new)
+		.forEach(MainView.this::add);
+	add(new FooterComponent());
+    }
+
+    private void showUserInformation(Authentication authentication) {
 	if (authentication != null && authentication.isAuthenticated()) {
 
 	    Object principal = authentication.getPrincipal();
@@ -54,11 +74,19 @@ public class MainView extends Div {
 		add(new H2("Angemeldet: " + authentication.getName()));
 	    }
 	}
-	apps.clear();
-	List<ClubhelperApp> allRegisteredApps = service.getAllRegisteredApps();
+    }
 
-	apps.addAll(allRegisteredApps);
-	apps.stream().map(ClubhelperAppButton::new).forEach(MainView.this::add);
-	add(new FooterComponent());
+    private boolean filterByAuthentication(ClubhelperApp app, List<String> roles) {
+	if (app.validForAllRoles()) {
+	    return true;
+	}
+	boolean isAuthenticated = false;
+	for (String string : roles) {
+	    if (app.validForRole(string)) {
+		isAuthenticated = true;
+		break;
+	    }
+	}
+	return isAuthenticated;
     }
 }
