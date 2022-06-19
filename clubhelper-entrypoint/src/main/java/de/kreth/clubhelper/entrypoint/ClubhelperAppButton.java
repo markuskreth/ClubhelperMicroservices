@@ -1,39 +1,27 @@
 package de.kreth.clubhelper.entrypoint;
 
-import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.page.Page;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.dom.Style;
 
-public class ClubhelperAppButton extends Button {
+public class ClubhelperAppButton extends Anchor {
 
-	private static final long serialVersionUID = 1L;
-	private final Logger logger;
-	private final ClubhelperApp app;
+    private static final long serialVersionUID = 1L;
 
-	public ClubhelperAppButton(ClubhelperApp app) {
-		super(app.getName());
-		setWidth("150px");
-		setHeight("150px");
-		Style style = getStyle();
-		style.set("margin", "10px");
-		this.addClickListener(this::onClick);
-		this.app = Objects.requireNonNull(app);
-		this.logger = LoggerFactory.getLogger(getClass());
-		getElement().setProperty("title", app.getUrl());
-	}
+    public static ClubhelperAppButton create(ClubhelperApp app) {
+	Button button = new Button();
+	return new ClubhelperAppButton(app, button);
+    }
 
-	private void onClick(ClickEvent<Button> ev) {
-		getUI().ifPresent(ui -> {
-			Page page = ui.getPage();
-			logger.info("opening {} with uri {}", app.getName(), app.getUrl());
-			page.open(app.getUrl(), "_self");
-		});
-	}
+    public ClubhelperAppButton(ClubhelperApp app, Button button) {
+	super(app.getUrl(), button);
+	setTarget("_self");
+	button.setText(app.getName());
+	button.setWidth("150px");
+	button.setHeight("150px");
+	Style style = button.getStyle();
+	style.set("margin", "10px");
+	getElement().setProperty("title", app.getUrl());
+    }
 
 }

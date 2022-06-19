@@ -1,5 +1,14 @@
 package de.kreth.clubhelper.entrypoint.config;
 
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -12,6 +21,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
@@ -35,11 +45,35 @@ public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
 	super.configure(http);
 	http.cors().and()
+		.addFilterAt(logoutFilter(), LogoutFilter.class)
+		.addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
 		.csrf().disable()
 		.anonymous().disable()
 		.authorizeRequests().requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-		.anyRequest().authenticated();
+		.anyRequest().authenticated().and()
+		.logout().addLogoutHandler(keycloakLogoutHandler()).deleteCookies("JSESSIONID")
+		.invalidateHttpSession(false)
+		.logoutUrl("/logout").logoutSuccessUrl("/");
 
+    }
+
+    @Bean
+    public LogoutFilter logoutFilter() throws Exception {
+	LogoutFilter logoutFilter = new LogoutFilter("/", keycloakLogoutHandler()) {
+	    @Override
+	    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+		    throws IOException, ServletException {
+		super.doFilter(request, response, chain);
+		if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
+		    if (requiresLogout(((HttpServletRequest) request), ((HttpServletResponse) response))) {
+			((HttpServletRequest) request).logout();
+		    }
+		}
+	    }
+	};
+	logoutFilter.setFilterProcessesUrl("/logout");
+
+	return logoutFilter;
     }
 
     @Override

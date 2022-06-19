@@ -10,11 +10,14 @@ import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 
@@ -38,8 +41,10 @@ public class MainView extends Div {
     public void doRefresh() {
 	this.removeAll();
 
-	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	SecurityContext context = SecurityContextHolder.getContext();
+	Authentication authentication = context.getAuthentication();
 	showUserInformation(authentication);
+	add(new Paragraph());
 	apps.clear();
 	List<ClubhelperApp> allRegisteredApps = service.getAllRegisteredApps();
 
@@ -51,8 +56,9 @@ public class MainView extends Div {
 
 	apps.stream()
 		.filter(a -> filterByAuthentication(a, roles))
-		.map(ClubhelperAppButton::new)
+		.map(ClubhelperAppButton::create)
 		.forEach(MainView.this::add);
+	add(new Paragraph());
 	add(new FooterComponent());
     }
 
@@ -70,8 +76,10 @@ public class MainView extends Div {
 			.append(token.getFamilyName()).append(" (")
 			.append(token.getEmail()).append(")");
 		add(new H2(text.toString()));
+		add(new Anchor("/logout", "Abmelden"));
 	    } else {
 		add(new H2("Angemeldet: " + authentication.getName()));
+		add(new Anchor("/logout", "Abmelden"));
 	    }
 	}
     }
