@@ -22,7 +22,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- github server corresponds to entry in ~/.m2/settings.xml -->
 		<github.global.server>github</github.global.server>
-		
+
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
 	</properties>
@@ -79,7 +79,7 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.googlecode.libphonenumber</groupId>
 				<artifactId>libphonenumber</artifactId>
@@ -138,13 +138,17 @@
 		</pluginManagement>
 	</build>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>nexus-snapshots</id>
-      <url>https://nexus.kreth-development.de/repository/maven-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
-  
+	<distributionManagement>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<url>https://nexus.kreth-development.de/repository/maven-snapshots/</url>
+		</snapshotRepository>
+		<repository>
+			<id>nexus-releases</id>
+			<url>https://nexus.kreth-development.de/repository/maven-releases/</url>
+		</repository>
+	</distributionManagement>
+
 	<modules>
 		<module>clubhelper-data</module>
 		<module>clubhelper-entity</module>
@@ -158,6 +162,5 @@
 
 	<scm>
 		<developerConnection>scm:git:https://github.com/markuskreth/ClubhelperMicroservices.git</developerConnection>
-	  <tag>clubhelper.parent-0.3.1</tag>
-  </scm>
+	</scm>
 </project>
