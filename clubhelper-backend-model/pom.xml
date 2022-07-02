@@ -10,7 +10,6 @@
 		<groupId>de.kreth.clubhelper</groupId>
 		<artifactId>clubhelper.parent</artifactId>
 		<version>0.3.2-SNAPSHOT</version>
-		<relativePath>../</relativePath>
 	</parent>
 
 	<properties>
