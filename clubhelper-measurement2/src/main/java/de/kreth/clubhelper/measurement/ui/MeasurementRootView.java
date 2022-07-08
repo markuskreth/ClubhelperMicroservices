@@ -4,13 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 
 import de.kreth.clubhelper.measurement.remote.MeasurementBusiness;
 import de.kreth.clubhelper.vaadincomponents.views.PersonListView;
 
 @Route
-@RouteAlias("/")
 @PageTitle("Personenliste")
 public class MeasurementRootView extends PersonListView<PersonMeasurementOverviewView> {
 

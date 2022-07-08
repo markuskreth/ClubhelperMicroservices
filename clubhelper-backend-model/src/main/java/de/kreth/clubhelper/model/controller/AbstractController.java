@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,14 @@ public abstract class AbstractController<T extends BaseEntity, D extends CrudRep
     @Override
     @GetMapping(value = { "/", "" })
     public List<T> getAll() {
+
 	Iterable<T> findAll = dao.findAll();
+	for (Iterator<T> iterator = findAll.iterator(); iterator.hasNext();) {
+	    T next = iterator.next();
+	    if (next.isDeleted()) {
+		iterator.remove();
+	    }
+	}
 	List<T> result = new ArrayList<>();
 	findAll.forEach(result::add);
 	return result;

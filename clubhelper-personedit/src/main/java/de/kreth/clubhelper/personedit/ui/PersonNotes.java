@@ -13,6 +13,7 @@ import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.combobox.dataview.ComboBoxListDataView;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -50,17 +51,19 @@ public class PersonNotes extends Div implements WithUnsavedChangesSupport, Perso
 	    private static final long serialVersionUID = 5826378017141556665L;
 
 	    @Override
-	    public void setItems(Collection<String> items) {
+	    public ComboBoxListDataView<String> setItems(Collection<String> items) {
 		noteKeyChangedListener.enabled.set(false);
-		super.setItems(items);
+		final ComboBoxListDataView<String> listView = super.setItems(items);
 		noteKeyChangedListener.enabled.set(true);
+		return listView;
 	    }
 
 	    @Override
-	    public void setItems(String... items) {
+	    public ComboBoxListDataView<String> setItems(String... items) {
 		noteKeyChangedListener.enabled.set(false);
-		super.setItems(items);
+		final ComboBoxListDataView<String> listView = super.setItems(items);
 		noteKeyChangedListener.enabled.set(true);
+		return listView;
 	    }
 	};
 	this.notesKeyBox.setAllowCustomValue(false);

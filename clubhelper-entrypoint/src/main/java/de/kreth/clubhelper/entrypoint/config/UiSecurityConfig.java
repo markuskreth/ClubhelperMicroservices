@@ -81,22 +81,19 @@ public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 	web.ignoring().antMatchers(
 		// Vaadin Flow static resources //
 		"/VAADIN/**",
-
 		// the standard favicon URI
 		"/favicon.ico",
-
 		// the robots exclusion standard
 		"/robots.txt",
-
+		// For Upgrade Vaadin 23
+		"/offline-stub.html",
+		"/sw-runtime-resources-precache.js",
 		// web application manifest //
 		"/manifest.webmanifest", "/sw.js", "/offline-page.html",
-
 		// (development mode) static resources //
 		"/frontend/**",
-
 		// (development mode) webjars //
 		"/webjars/**",
-
 		// (production mode) static resources //
 		"/frontend-es5/**", "/frontend-es6/**");
     }

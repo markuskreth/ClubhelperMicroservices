@@ -12,7 +12,7 @@
 		<artifactId>clubhelper.parent</artifactId>
 		<version>0.3.3-SNAPSHOT</version>
 	</parent>
-
+       
 	<dependencies>
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -271,10 +271,4 @@
 
 	</profiles>
 
-	<scm>
-		<url>scm:git:https://github.com/markuskreth/clubhelper-personedit.git</url>
-		<developerConnection>scm:git:https://github.com/markuskreth/clubhelper-personedit.git</developerConnection>
-		<connection>scm:git:https://github.com/markuskreth/clubhelper-personedit.git</connection>
-	  <tag>clubhelper.parent-0.3.1</tag>
-  </scm>
 </project>

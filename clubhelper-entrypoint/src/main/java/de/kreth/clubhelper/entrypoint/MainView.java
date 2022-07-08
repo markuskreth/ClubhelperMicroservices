@@ -22,9 +22,8 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 
 @Route
-@PWA(name = "Clubhelper Übersicht", shortName = "Übersicht", description = "Dies ist der Einstiegspunkt und Übersicht über alle Clubhelper Apps.", enableInstallPrompt = false)
+@PWA(name = "Clubhelper Übersicht", shortName = "Übersicht", description = "Dies ist der Einstiegspunkt und Übersicht über alle Clubhelper Apps.")
 @CssImport("./styles/shared-styles.css")
-@CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 public class MainView extends Div {
 

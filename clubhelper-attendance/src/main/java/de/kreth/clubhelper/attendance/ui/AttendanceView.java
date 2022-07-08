@@ -54,7 +54,7 @@ import de.kreth.clubhelper.vaadincomponents.groupfilter.GroupFilterListener;
 
 @Push
 @Route("")
-@PWA(name = "MTV Trampolin Anwesenheit", shortName = "Anwesenheit", description = "Dies ist eine App zur Erfassung von Anwesenheiten für die Trampolingruppe des MTV Groß-Buchholz.", enableInstallPrompt = false)
+@PWA(name = "MTV Trampolin Anwesenheit", shortName = "Anwesenheit", description = "Dies ist eine App zur Erfassung von Anwesenheiten für die Trampolingruppe des MTV Groß-Buchholz.")
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 @PageTitle("Anwesenheit")
@@ -295,9 +295,8 @@ public class AttendanceView extends VerticalLayout
 	    default:
 		if (toCompare.getId() != null) {
 		    return toCompare.getId().compareTo(o.toCompare.getId());
-		} else {
-		    return 0;
 		}
+		return 0;
 	    }
 	}
 

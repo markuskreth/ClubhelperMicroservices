@@ -64,6 +64,9 @@ public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 		"/favicon.ico",
 		// the robots exclusion standard
 		"/robots.txt",
+		// For Upgrade Vaadin 23
+		"/offline-stub.html",
+		"/sw-runtime-resources-precache.js",
 		// web application manifest //
 		"/manifest.webmanifest", "/sw.js", "/offline-page.html",
 		// (development mode) static resources //
