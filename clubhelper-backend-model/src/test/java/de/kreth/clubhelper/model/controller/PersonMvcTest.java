@@ -100,7 +100,7 @@ class PersonMvcTest {
 		+ ",\"gender\":{\"id\":1},\"groups\":[]}]";
 	mvc.perform(get("/person").accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
 		.andExpect(status().isOk())
-		.andExpect(content().string(jsonListOfPersons));
+		.andExpect(content().json(jsonListOfPersons));
     }
 
     @Test

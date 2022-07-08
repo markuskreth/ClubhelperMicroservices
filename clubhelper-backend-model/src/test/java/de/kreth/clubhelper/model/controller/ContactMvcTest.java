@@ -78,6 +78,21 @@ class ContactMvcTest {
     @BeforeEach
     void initMocks() {
 
+	initData();
+
+	when(personDao.findAll()).thenReturn(Arrays.asList(p1, p2, deleted));
+	when(personDao.findByDeletedIsNull()).thenReturn(Arrays.asList(p1, p2));
+	when(personDao.findById(1L)).thenReturn(Optional.of(p1));
+	when(personDao.findById(2L)).thenReturn(Optional.of(p2));
+
+	when(contactDao.findByPersonId(eq(1L))).thenReturn(Arrays.asList(p1c1, p1c2));
+	when(contactDao.findByPersonId(eq(2L))).thenReturn(Arrays.asList(p2c1, p2c2));
+	when(contactDao.findByPersonIdAndDeletedIsNull(eq(1L))).thenReturn(Arrays.asList(p1c1, p1c2));
+	when(contactDao.findByPersonIdAndDeletedIsNull(eq(2L))).thenReturn(Arrays.asList(p2c1, p2c2));
+
+    }
+
+    private void initData() {
 	p1 = new Person();
 	p1.setId(1);
 	p1.setPrename("prename");
@@ -121,15 +136,6 @@ class ContactMvcTest {
 	deleted.setDeleted(LocalDateTime.of(2020, 11, 11, 11, 11, 11));
 
 	now = LocalDateTime.of(2020, 11, 13, 22, 22, 22);
-
-	when(personDao.findAll()).thenReturn(Arrays.asList(p1, p2, deleted));
-	when(personDao.findByDeletedIsNull()).thenReturn(Arrays.asList(p1, p2));
-	when(personDao.findById(1L)).thenReturn(Optional.of(p1));
-	when(personDao.findById(2L)).thenReturn(Optional.of(p2));
-
-	when(contactDao.findByPersonId(eq(1L))).thenReturn(Arrays.asList(p1c1, p1c2));
-	when(contactDao.findByPersonId(eq(2L))).thenReturn(Arrays.asList(p2c1, p2c2));
-
     }
 
     @Test
@@ -140,7 +146,7 @@ class ContactMvcTest {
 	String jsonListOfPersons = w.toString();
 	mvc.perform(get("/contact/for/1").accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
 		.andExpect(status().isOk())
-		.andExpect(content().string(jsonListOfPersons));
+		.andExpect(content().json(jsonListOfPersons));
     }
 
     @Test
@@ -149,6 +155,6 @@ class ContactMvcTest {
 	String jsonListOfPersons = "{\"id\":1,\"changed\":null,\"created\":null,\"deleted\":null,\"birth\":\"2000-01-01\",\"prename\":\"prename\",\"surname\":\"surname\",\"gender\":\"MALE\",\"groups\":[]}";
 	mvc.perform(post("/contact/for/1").accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
 		.andExpect(status().isOk())
-		.andExpect(content().string(jsonListOfPersons));
+		.andExpect(content().json(jsonListOfPersons));
     }
 }

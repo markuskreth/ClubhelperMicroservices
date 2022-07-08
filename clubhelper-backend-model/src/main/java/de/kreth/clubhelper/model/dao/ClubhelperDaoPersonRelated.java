@@ -12,4 +12,6 @@ public interface ClubhelperDaoPersonRelated<T extends PersonRelated & EntityAcce
 
     List<T> findByPersonId(long personId);
 
+    List<T> findByPersonIdAndDeletedIsNull(long personId);
+
 }

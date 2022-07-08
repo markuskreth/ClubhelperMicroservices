@@ -1,8 +1,6 @@
 package de.kreth.clubhelper.model.controller;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,17 +50,8 @@ public abstract class AbstractControllerPersonRelated<T extends BaseEntity & Per
      */
     @GetMapping(value = "/for/{id}")
     public List<T> getByParentId(@PathVariable("id") long id) {
-	if (dao instanceof ClubhelperDaoPersonRelated) {
-	    List<T> findByPersonId = dao.findByPersonId(id);
-	    for (Iterator<T> iterator = findByPersonId.iterator(); iterator.hasNext();) {
-		T t = iterator.next();
-		if (t.isDeleted()) {
-		    iterator.remove();
-		}
-	    }
-	    return findByPersonId;
-	}
-	return Collections.emptyList();
+	List<T> findByPersonId = dao.findByPersonIdAndDeletedIsNull(id);
+	return findByPersonId;
     }
 
     @PutMapping(value = "/for/{id}")

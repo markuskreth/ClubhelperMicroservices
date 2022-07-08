@@ -109,6 +109,7 @@ class MeasurementControllerTest {
 	asList.add(measurement2);
 
 	when(measurementDao.findByPersonId(person.getId())).thenAnswer(i -> asList);
+	when(measurementDao.findByPersonIdAndDeletedIsNull(person.getId())).thenAnswer(i -> asList);
 	StringWriter writer = new StringWriter();
 	objectMapper.writeValue(writer, measurement1);
 
