@@ -47,4 +47,11 @@ public class BusinessImpl implements Business {
 	return Arrays.asList(forObject);
     }
 
+    @Override
+    public Person getPerson(Long personId) {
+	String url = apiUrl + "/person/" + personId;
+	Person person = webClient.getForObject(url, Person.class);
+	return person;
+    }
+
 }

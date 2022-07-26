@@ -12,4 +12,6 @@ public interface Business {
 
     Collection<Person> getPersons();
 
+    Person getPerson(Long personId);
+
 }
