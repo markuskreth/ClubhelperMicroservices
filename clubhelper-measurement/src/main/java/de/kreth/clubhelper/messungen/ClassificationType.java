@@ -1,4 +1,4 @@
-package de.kreth.clubhelper.measurement.data;
+package de.kreth.clubhelper.messungen;
 
 import java.util.Arrays;
 import java.util.List;

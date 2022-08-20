@@ -1,4 +1,4 @@
-package de.kreth.clubhelper.measurement.config;
+package de.kreth.clubhelper.messungen.config;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;

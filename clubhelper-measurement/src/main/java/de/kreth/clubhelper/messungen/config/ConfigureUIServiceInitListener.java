@@ -1,4 +1,4 @@
-package de.kreth.clubhelper.measurement.config;
+package de.kreth.clubhelper.messungen.config;
 
 import org.springframework.stereotype.Component;
 
@@ -7,7 +7,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 
-import de.kreth.clubhelper.measurement.ui.MeasurementRootView;
+import de.kreth.clubhelper.messungen.ui.MessungenMainView;
 
 @Component
 public class ConfigureUIServiceInitListener implements VaadinServiceInitListener {
@@ -38,6 +38,6 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
 
     private boolean isSecureAndNotAuthentificated(Class<?> navigationTarget) {
 	boolean userLoggedIn = SecurityUtils.isUserLoggedIn();
-	return MeasurementRootView.class.equals(navigationTarget) && !userLoggedIn;
+	return MessungenMainView.class.equals(navigationTarget) && !userLoggedIn;
     }
 }

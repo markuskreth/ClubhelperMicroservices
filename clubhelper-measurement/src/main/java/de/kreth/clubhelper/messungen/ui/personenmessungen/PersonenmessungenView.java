@@ -1,4 +1,4 @@
-package de.kreth.clubhelper.messungen.views.personenmessungen;
+package de.kreth.clubhelper.messungen.ui.personenmessungen;
 
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;

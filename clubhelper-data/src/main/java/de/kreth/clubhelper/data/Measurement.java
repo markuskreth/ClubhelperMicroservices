@@ -9,7 +9,7 @@ public class Measurement extends BaseEntity implements Serializable {
 
     private LocalDateTime onTime;
     private MeasurementType measurementType = MeasurementType.JumpHeightSeconds;
-    private String classification;
+    private String classification = "";
     private double measured;
 
     public LocalDateTime getOnTime() {
