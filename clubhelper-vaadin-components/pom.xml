@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>de.kreth.clubhelper</groupId>
 		<artifactId>clubhelper.parent</artifactId>
-		<version>0.3.2-SNAPSHOT</version>
+		<version>0.3.2</version>
 	</parent>
 
 	<dependencies>
@@ -132,6 +132,6 @@
 		<url>scm:git:https://github.com/markuskreth/clubhelper-vaadin-components.git</url>
 		<developerConnection>scm:git:https://github.com/markuskreth/clubhelper-vaadin-components.git</developerConnection>
 		<connection>scm:git:https://github.com/markuskreth/clubhelper-vaadin-components.git</connection>
-    <tag>clubhelper.parent-0.3.1</tag>
+    <tag>clubhelper.parent-0.3.2</tag>
   </scm>
 </project>
