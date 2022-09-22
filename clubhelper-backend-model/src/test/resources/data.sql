@@ -1,7 +1,6 @@
 --
 -- Dumping data for table groupdef
 --
-
 INSERT INTO groupdef(id, name, changed, created, deleted) VALUES (1,'Aktive','2016-12-17 13:59:01','2016-12-17 14:59:01',NULL);
 INSERT INTO groupdef(id, name, changed, created, deleted) VALUES (2,'Angehörige','2016-12-18 19:55:01','2016-12-18 20:55:01',NULL);
 INSERT INTO groupdef(id, name, changed, created, deleted) VALUES (3,'Übungsleiter','2016-12-18 19:55:01','2016-12-18 20:55:01',NULL);
@@ -648,6 +647,36 @@ INSERT INTO relative(id, person1, person2, TO_PERSON1_RELATION, TO_PERSON2_RELAT
 INSERT INTO relative(id, person1, person2, TO_PERSON1_RELATION, TO_PERSON2_RELATION, changed, created, deleted) VALUES (20,86,83,'SIBLINGS','SIBLINGS','2016-04-13 17:16:29','2016-04-13 19:16:29',NULL);
 INSERT INTO relative(id, person1, person2, TO_PERSON1_RELATION, TO_PERSON2_RELATION, changed, created, deleted) VALUES (22,90,91,'CHILD','PARENT','2016-05-04 15:06:59','2016-05-04 17:06:59',NULL);
 INSERT INTO relative(id, person1, person2, TO_PERSON1_RELATION, TO_PERSON2_RELATION, changed, created, deleted) VALUES (23,50,3,'SIBLINGS','SIBLINGS','2016-05-10 06:45:57','2016-05-10 08:45:57',NULL);
+
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (1, 1, 'JumpHeightSeconds', '2015-05-11 00:00:00', 13.760, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (2, 1, 'JumpHeightSeconds', '2016-04-25 00:00:00', 13.280, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (3, 1, 'JumpHeightSeconds', '2016-05-30 00:00:00', 14.600, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (4, 1, 'JumpHeightSeconds', '2013-01-28 00:00:00', 14.760, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (5, 1, 'JumpHeightSeconds', '2017-03-06 00:00:00', 14.970, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (6, 1, 'JumpHeightSeconds', '2014-10-20 00:00:00', 15.840, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (7, 1, 'JumpHeightSeconds', '2014-10-20 00:00:00', 16.210, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (8, 1, 'JumpHeightSeconds', '2015-01-26 00:00:00', 16.020, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (9, 1, 'JumpHeightSeconds', '2015-03-22 00:00:00', 16.140, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (10, 1, 'JumpHeightSeconds', '2015-02-04 00:00:00', 15.700, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (11, 1, 'JumpHeightSeconds', '2016-01-30 00:00:00', 16.520, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (12, 1, 'JumpHeightSeconds', '2016-05-30 00:00:00', 16.690, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Sprünge');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (13, 1, 'JumpHeightSeconds', '2013-01-28 00:00:00', 13.990, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Hocken');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (14, 1, 'JumpHeightSeconds', '2017-03-06 00:00:00', 14.850, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Hocken');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (15, 1, 'JumpHeightSeconds', '2014-10-20 00:00:00', 15.000, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Hocken');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (16, 1, 'JumpHeightSeconds', '2016-01-30 00:00:00', 14.690, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Hocken');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (17, 1, 'JumpHeightSeconds', '2017-11-05 00:00:00', 17.300, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, '10Hocken');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (18, 1, 'JumpHeightSeconds', '2016-04-25 00:00:00', 12.300, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'P3');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (19, 1, 'JumpHeightSeconds', '2016-05-30 00:00:00', 13.490, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'P3');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (20, 1, 'JumpHeightSeconds', '2013-01-28 00:00:00', 14.200, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'P3');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (21, 1, 'JumpHeightSeconds', '2014-10-20 00:00:00', 14.700, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'P3');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (22, 1, 'JumpHeightSeconds', '2014-10-20 00:00:00', 14.440, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'P6');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (23, 1, 'JumpHeightSeconds', '2015-01-26 00:00:00', 14.270, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'P6');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (24, 1, 'JumpHeightSeconds', '2015-03-22 00:00:00', 14.330, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'P6');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (25, 1, 'JumpHeightSeconds', '2015-02-04 00:00:00', 15.590, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'P6');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (26, 1, 'JumpHeightSeconds', '2016-05-30 00:00:00', 14.490, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'P6');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (27, 1, 'JumpHeightSeconds', '2015-01-26 00:00:00', 14.290, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'Kür P6 m. Salto Sitz');
+INSERT INTO measurement (id, person_id, measurement_type, on_time, measured, changed, created, deleted, classification) VALUES (28, 1, 'JumpHeightSeconds', '2015-02-04 00:00:00', 13.700, '2022-07-12 22:24:06', '2022-07-12 22:24:06', NULL, 'Kür P6 m. Salto Sitz');
+
 
 --
 -- Dumping data for table version

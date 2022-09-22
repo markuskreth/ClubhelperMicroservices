@@ -1,5 +1,6 @@
 package de.kreth.clubhelper.model.dao;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
@@ -7,18 +8,17 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.TestPropertySource;
 
 import de.kreth.clubhelper.data.MeasurementType;
 import de.kreth.clubhelper.entity.Measurement;
 import de.kreth.clubhelper.entity.Person;
 
 @DataJpaTest()
-@TestPropertySource(properties = {
-	"spring.jpa.hibernate.ddl-auto=none"
-})
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class StoreMeasurementTest {
+
     @Autowired
     PersonDao personDao;
     @Autowired
@@ -37,6 +37,6 @@ class StoreMeasurementTest {
 	m.setMeasured(234.234);
 	m.setMeasurementType(MeasurementType.JumpHeightSeconds);
 	m.setOnTime(LocalDateTime.now());
-	measurementDao.save(m);
+	assertNotNull(measurementDao.save(m));
     }
 }

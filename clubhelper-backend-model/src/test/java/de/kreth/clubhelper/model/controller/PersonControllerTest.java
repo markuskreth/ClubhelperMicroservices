@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 
 import de.kreth.clubhelper.entity.GroupDef;
 import de.kreth.clubhelper.entity.Person;
@@ -28,7 +30,9 @@ import de.kreth.clubhelper.model.dao.PersonDao;
 import de.kreth.clubhelper.model.testing.TestingDateTimeProvider;
 
 @DataJpaTest
-public class PersonControllerTest {
+@TestPropertySource(locations = "classpath:/application.personcontroller.test.properties")
+@Sql(scripts = "classpath:/schema.sql")
+class PersonControllerTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -98,20 +102,12 @@ public class PersonControllerTest {
 	competitors.setChanged(now);
 	competitors.setCreated(now);
 
-	active = entityManager.persist(active);
-	attendante = entityManager.persist(attendante);
-	trainer = entityManager.persist(trainer);
-	ehemalig = entityManager.persist(ehemalig);
-	competitors = entityManager.persist(competitors);
+	active = entityManager.persistAndFlush(active);
+	attendante = entityManager.persistAndFlush(attendante);
+	trainer = entityManager.persistAndFlush(trainer);
+	ehemalig = entityManager.persistAndFlush(ehemalig);
+	competitors = entityManager.persistAndFlush(competitors);
 
-	EntityManager em = entityManager.getEntityManager();
-	CriteriaBuilder cb = em.getCriteriaBuilder();
-	CriteriaQuery<GroupDef> cq = cb.createQuery(GroupDef.class);
-	Root<GroupDef> rootEntry = cq.from(GroupDef.class);
-	CriteriaQuery<GroupDef> all = cq.select(rootEntry);
-	TypedQuery<GroupDef> allQuery = em.createQuery(all);
-	List<GroupDef> resultList = allQuery.getResultList();
-	assertEquals(5, resultList.size());
     }
 
     @Test
@@ -122,14 +118,26 @@ public class PersonControllerTest {
 
     @Test
     void testPost() {
-	controller.insert(person);
 
 	List<Person> list = findAllEntity();
-	assertEquals(1, list.size());
-	Person next = list.get(0);
+	int oldSize = list.size();
 
-	assertEquals(localDateTimeProvider.now(), next.getChanged());
-	assertNotEquals(now, next.getCreated());
+	Person insert = controller.insert(person);
+
+	list = findAllEntity();
+	assertEquals(1, list.size() - oldSize);
+
+	Person inserted = null;
+	for (Person person : list) {
+	    if (insert.getId() == person.getId()) {
+		inserted = person;
+		break;
+	    }
+	}
+	assertNotNull(inserted);
+
+	assertEquals(localDateTimeProvider.now(), inserted.getChanged());
+	assertNotEquals(now, inserted.getCreated());
     }
 
     private List<Person> findAllEntity() {

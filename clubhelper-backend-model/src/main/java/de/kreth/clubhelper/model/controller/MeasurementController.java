@@ -1,8 +1,6 @@
 package de.kreth.clubhelper.model.controller;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,10 +26,22 @@ public class MeasurementController extends AbstractControllerPersonRelated<Measu
     public Map<MeasurementType, Set<String>> getAllTypes() {
 
 	Map<MeasurementType, Set<String>> values = new HashMap<>();
-	for (MeasurementType type : MeasurementType.values()) {
-	    Collection<String> types = dao.findDistinctClassificationByMeasurementType(type);
-	    values.put(type, new HashSet<String>(types));
+
+	for (MeasurementType measurementType : MeasurementType.values()) {
+	    Set<String> list = dao.findClassificationsByType(measurementType);
+	    values.put(measurementType, list);
 	}
+//	Iterable<Measurement> iterator = dao.findAll();
+//	for (Measurement measurement : iterator) {
+//	    Set<String> types;
+//	    if (values.containsKey(measurement.getMeasurementType())) {
+//		types = values.get(measurement.getMeasurementType());
+//	    } else {
+//		types = new HashSet<>();
+//		values.put(measurement.getMeasurementType(), types);
+//	    }
+//	    types.add(measurement.getClassification());
+//	}
 	return values;
     }
 }

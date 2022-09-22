@@ -7,23 +7,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.adapters.springboot.KeycloakAutoConfiguration;
 import org.keycloak.adapters.springboot.KeycloakBaseSpringBootConfiguration;
+import org.mockito.ArgumentMatchers;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.test.web.servlet.MvcResult;
 
 import de.kreth.clubhelper.data.MeasurementType;
 import de.kreth.clubhelper.entity.Measurement;
@@ -52,6 +58,7 @@ class MeasurementControllerTest {
 
     private Measurement measurement1;
     private Measurement measurement2;
+    private Measurement measurement3;
 
     private Person person;
 
@@ -82,6 +89,14 @@ class MeasurementControllerTest {
 	measurement2.setClassification("10 Strecksprünge");
 	measurement2.setOnTime(onDate.plusDays(2));
 	measurement2.setMeasured(16.3);
+
+	measurement3 = new Measurement();
+	measurement3.setId(2);
+	measurement3.setPerson(person);
+	measurement3.setMeasurementType(MeasurementType.JumpHeightSeconds);
+	measurement3.setClassification("Kür");
+	measurement3.setOnTime(onDate.plusDays(2));
+	measurement3.setMeasured(16.3);
 
     }
 
@@ -116,6 +131,7 @@ class MeasurementControllerTest {
 	mvc.perform(get("/measurement/for/" + person.getId()))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(ContentType.APPLICATION_JSON.getMimeType()))
+//		.andExpect(content().encoding(StandardCharsets.UTF_8))
 		.andExpect(content().json(
 			"[{\"id\":1,\"changed\":null,\"created\":null,\"deleted\":null,\"onTime\":\"2022-04-01T18:55:13\","
 				+ "\"measurementType\":\"JumpHeightSeconds\","
@@ -126,4 +142,29 @@ class MeasurementControllerTest {
 			true));
     }
 
+    @Test
+    void listClassifications() throws Exception {
+
+	List<Measurement> asList = new ArrayList<>();
+	asList.add(measurement1);
+	asList.add(measurement2);
+	asList.add(measurement3);
+
+	Set<String> types = asList.stream().map(Measurement::getClassification).collect(Collectors.toSet());
+
+	when(measurementDao.findAll())
+		.thenAnswer(i -> asList);
+	when(measurementDao.findClassificationsByType(ArgumentMatchers.any()))
+		.thenAnswer(i -> types);
+
+	MvcResult result = mvc.perform(get("/measurement/types"))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(ContentType.APPLICATION_JSON.getMimeType()))
+//		.andExpect(content().encoding(StandardCharsets.UTF_8))
+		.andReturn();
+
+	String contentAsString = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+	JSONAssert.assertEquals("{\"JumpHeightSeconds\":[\"Kür\",\"10 Strecksprünge\"]}", contentAsString, true);
+    }
 }

@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,13 +23,11 @@ import org.reflections.util.ConfigurationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.kreth.clubhelper.entity.BaseEntity;
 import de.kreth.clubhelper.entity.EntityAccessor;
 
 @JsonTest
-public class SerializeAllDataClasses {
+class SerializeAllDataClasses {
 
     @Autowired
     ObjectMapper mapper;

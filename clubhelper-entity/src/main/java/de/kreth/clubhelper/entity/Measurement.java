@@ -3,7 +3,10 @@ package de.kreth.clubhelper.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
@@ -25,6 +28,8 @@ public class Measurement extends BaseEntity implements Serializable, PersonRelat
     private Person person;
 
     private LocalDateTime onTime;
+    @Column(name = "measurement_type")
+    @Enumerated(EnumType.STRING)
     private MeasurementType measurementType;
     private String classification;
     private double measured;
@@ -69,6 +74,12 @@ public class Measurement extends BaseEntity implements Serializable, PersonRelat
     @Override
     public void setPerson(Person person) {
 	this.person = person;
+    }
+
+    @Override
+    public String toString() {
+	return "Measurement [measurementType=" + measurementType + ", classification=" + classification + ", measured="
+		+ measured + ", person=" + person + "]";
     }
 
 }

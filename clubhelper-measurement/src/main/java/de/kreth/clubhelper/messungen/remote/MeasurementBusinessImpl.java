@@ -75,6 +75,7 @@ public class MeasurementBusinessImpl extends de.kreth.clubhelper.vaadincomponent
     public Map<MeasurementType, Set<String>> getAllTypes() {
 	String url = apiUrl + "/measurement/types";
 
+	@SuppressWarnings("unchecked")
 	Map<MeasurementType, Set<String>> types = webClient.getForObject(url, Map.class);
 	return types;
     }
