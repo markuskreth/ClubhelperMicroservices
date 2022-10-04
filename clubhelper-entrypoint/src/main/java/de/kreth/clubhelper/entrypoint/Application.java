@@ -1,10 +1,13 @@
 package de.kreth.clubhelper.entrypoint;
 
+import java.util.Locale;
+
+import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.server.PWA;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-
-import com.vaadin.flow.server.PWA;
 
 import de.kreth.property2java.processor.GenerateProperty2Java;
 
@@ -14,9 +17,10 @@ import de.kreth.property2java.processor.GenerateProperty2Java;
 @SpringBootApplication
 @GenerateProperty2Java(resources = { "version.properties" })
 @PWA(name = "clubhelper", shortName = "clubhelper", offlineResources = {})
-public class Application extends SpringBootServletInitializer {
+public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
     public static void main(String[] args) {
+	Locale.setDefault(Locale.GERMANY);
 	SpringApplication.run(Application.class, args);
     }
 

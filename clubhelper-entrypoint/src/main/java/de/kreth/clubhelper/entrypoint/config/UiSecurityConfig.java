@@ -9,8 +9,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.keycloak.adapters.KeycloakConfigResolver;
-import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
@@ -48,9 +46,13 @@ public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 		.addFilterAt(logoutFilter(), LogoutFilter.class)
 		.addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
 		.csrf().disable()
-		.anonymous().disable()
 		.authorizeRequests().requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-		.anyRequest().authenticated().and()
+		.antMatchers("/login**").fullyAuthenticated()
+//		.and().oauth2Login().loginProcessingUrl("/login")
+//		.and().formLogin().loginPage("/login").permitAll().successForwardUrl("/")
+//		.anyRequest().authenticated()
+//		.and().authorizeRequests().antMatchers("/login**").fullyAuthenticated()
+		.and()
 		.logout().addLogoutHandler(keycloakLogoutHandler()).deleteCookies("JSESSIONID")
 		.invalidateHttpSession(false)
 		.logoutUrl("/logout").logoutSuccessUrl("/");
@@ -96,11 +98,6 @@ public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 		"/webjars/**",
 		// (production mode) static resources //
 		"/frontend-es5/**", "/frontend-es6/**");
-    }
-
-    @Bean
-    public static KeycloakConfigResolver keycloakConfigResolver() {
-	return new KeycloakSpringBootConfigResolver();
     }
 
 }

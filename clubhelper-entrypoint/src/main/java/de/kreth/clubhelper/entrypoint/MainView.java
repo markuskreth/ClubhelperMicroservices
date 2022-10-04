@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.router.Route;
+
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.representations.AccessToken;
@@ -13,16 +19,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.PWA;
+import de.kreth.clubhelper.entrypoint.config.SecurityUtils;
 
 @Route
-@PWA(name = "Clubhelper Übersicht", shortName = "Übersicht", description = "Dies ist der Einstiegspunkt und Übersicht über alle Clubhelper Apps.")
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 public class MainView extends Div {
@@ -55,14 +54,14 @@ public class MainView extends Div {
 
 	apps.stream()
 		.filter(a -> filterByAuthentication(a, roles))
-		.map(ClubhelperAppButton::create)
+		.map(ClubhelperButton::createAppButton)
 		.forEach(MainView.this::add);
 	add(new Paragraph());
 	add(new FooterComponent());
     }
 
     private void showUserInformation(Authentication authentication) {
-	if (authentication != null && authentication.isAuthenticated()) {
+	if (SecurityUtils.isUserLoggedIn()) {
 
 	    Object principal = authentication.getPrincipal();
 	    if (principal instanceof KeycloakPrincipal) {
@@ -75,11 +74,13 @@ public class MainView extends Div {
 			.append(token.getFamilyName()).append(" (")
 			.append(token.getEmail()).append(")");
 		add(new H2(text.toString()));
-		add(new Anchor("/logout", "Abmelden"));
+		add(ClubhelperButton.createButton("/logout", "Abmelden"));
 	    } else {
 		add(new H2("Angemeldet: " + authentication.getName()));
-		add(new Anchor("/logout", "Abmelden"));
+		add(ClubhelperButton.createButton("/logout", "Abmelden"));
 	    }
+	} else {
+	    add(ClubhelperButton.createButton("/login", "Anmelden"));
 	}
     }
 
@@ -96,4 +97,5 @@ public class MainView extends Div {
 	}
 	return isAuthenticated;
     }
+
 }
