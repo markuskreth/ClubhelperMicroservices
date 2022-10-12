@@ -4,8 +4,8 @@ import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
 import de.kreth.clubhelper.data.Measurement;
@@ -26,7 +26,7 @@ public class MeasurementLayout extends Div {
     public MeasurementLayout(Measurement measurement, boolean printType) {
 	MeasurementType type = measurement.getMeasurementType();
 
-	FormLayout content = new FormLayout();
+	VerticalLayout content = new VerticalLayout();
 	if (printType) {
 	    measurementType = new TextField("Typ: ");
 	    measurementType.setValue(type.getTitle());
