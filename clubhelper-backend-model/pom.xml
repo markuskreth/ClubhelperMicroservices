@@ -45,6 +45,20 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>de.kreth.property2java</groupId>
+			<artifactId>PropertyToJavaGenerator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
@@ -87,10 +101,20 @@
 			<groupId>de.kreth.clubhelper</groupId>
 			<artifactId>clubhelper-entity</artifactId>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
+		<defaultGoal>spring-boot:run</defaultGoal>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>${basedir}/src/packaging</directory>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -103,6 +127,6 @@
 		<url>scm:git:https://github.com/markuskreth/clubhelper_backend_model.git</url>
 		<developerConnection>scm:git:https://github.com/markuskreth/clubhelper_backend_model.git</developerConnection>
 		<connection>scm:git:https://github.com/markuskreth/clubhelper_backend_model.git</connection>
-    <tag>clubhelper.parent-0.3.1</tag>
-  </scm>
+		<tag>clubhelper.parent-0.3.1</tag>
+	</scm>
 </project>

@@ -15,30 +15,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/")
-public class HomeController
-{
-   @GetMapping
-   public String index(Principal principal)
-   {
-      return principal == null ? "Welcome to Clubhelper Rest" : "Welcome to Clubhelper Rest, " + principal.getName();
-   }
+public class HomeController {
+    @GetMapping("/info")
+    public String index(Principal principal) {
+	return principal == null ? "Welcome to Clubhelper Rest" : "Welcome to Clubhelper Rest, " + principal.getName();
+    }
 
-   @GetMapping("/login")
-   @PreAuthorize("isAuthenticated()")
-   public String login(Principal principal)
-   {
-      return principal == null ? "null" : principal.getName();
-   }
+    @GetMapping("/login")
+    @PreAuthorize("isAuthenticated()")
+    public String login(Principal principal) {
+	return principal == null ? "null" : principal.getName();
+    }
 
-   @GetMapping(path = "/logout")
-   public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException
-   {
-      request.logout();
-      try {
-         response.sendRedirect("/");
-      }
-      catch (IOException e) {
-         throw new UncheckedIOException("Redirect failed", e);
-      }
-   }
+    @GetMapping(path = "/logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	request.logout();
+	try {
+	    response.sendRedirect("/");
+	} catch (IOException e) {
+	    throw new UncheckedIOException("Redirect failed", e);
+	}
+    }
 }

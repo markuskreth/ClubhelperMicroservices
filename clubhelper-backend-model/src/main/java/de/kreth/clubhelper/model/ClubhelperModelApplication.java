@@ -4,9 +4,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
+import de.kreth.property2java.processor.Format;
+import de.kreth.property2java.processor.GenerateProperty2Java;
+
 @SpringBootApplication
 @EntityScan("de.kreth.clubhelper.entity")
-//@EnableWebMvc
+@GenerateProperty2Java(resources = "version.properties", format = Format.WithInnerPropertyResourceBundle)
 public class ClubhelperModelApplication {
 
     public static void main(String[] args) {
