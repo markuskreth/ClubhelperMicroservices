@@ -1,7 +1,5 @@
 package de.kreth.clubhelper.personedit.config;
 
-import org.keycloak.adapters.KeycloakConfigResolver;
-import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.client.KeycloakClientRequestFactory;
@@ -55,7 +53,7 @@ public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 		.anonymous().disable()
 //		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
 		.authorizeRequests().requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-		.anyRequest().hasAnyRole("ROLE_trainer", "ROLE_admin")
+		.anyRequest().authenticated()
 		.and().exceptionHandling().accessDeniedPage("/accessDeniedPage");
     }
 
@@ -100,8 +98,4 @@ public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 		"/frontend-es5/**", "/frontend-es6/**");
     }
 
-    @Bean
-    public static KeycloakConfigResolver keycloakConfigResolver() {
-	return new KeycloakSpringBootConfigResolver();
-    }
 }

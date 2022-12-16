@@ -1,8 +1,6 @@
 package de.kreth.clubhelper.personedit.ui;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -24,8 +22,14 @@ import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.BeforeLeaveObserver;
 import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteParameters;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import de.kreth.clubhelper.data.Person;
 import de.kreth.clubhelper.personedit.data.DetailedPerson;
@@ -176,7 +180,10 @@ public class PersonEditor extends Div implements HasUrlParameter<Long>, BeforeLe
     }
 
     @Override
-    public void setParameter(BeforeEvent event, Long personId) {
+    public void setParameter(BeforeEvent event, @OptionalParameter Long personId) {
+	if (personId == null) {
+	    personId = getPersonIdFromRoute(event);
+	}
 	if (personId != null) {
 	    if (personId < 0) {
 		Person newPerson = new Person();
@@ -196,7 +203,13 @@ public class PersonEditor extends Div implements HasUrlParameter<Long>, BeforeLe
 	    binder.readBean(personDetails);
 	    binder.validate();
 	}
+    }
 
+    private Long getPersonIdFromRoute(BeforeEvent event) {
+	RouteParameters routeParameters = event.getRouteParameters();
+	Optional<Long> personId = routeParameters.getLong("personId");
+
+	return personId.orElse(null);
     }
 
     @Override

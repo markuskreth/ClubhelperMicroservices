@@ -1,9 +1,5 @@
 package de.kreth.clubhelper.personedit.ui;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
@@ -23,6 +19,10 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import de.kreth.clubhelper.data.Person;
 import de.kreth.clubhelper.personedit.remote.Business;
 import de.kreth.clubhelper.personedit.ui.components.FooterComponent;
@@ -35,7 +35,7 @@ import de.kreth.clubhelper.vaadincomponents.groupfilter.GroupFilterListener;
 public class MainView extends VerticalLayout
 	implements ValueChangeListener<ComponentValueChangeEvent<TextField, String>>, GroupFilterListener {
 
-    final Logger logger = LoggerFactory.getLogger(getClass());
+    transient final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final long serialVersionUID = 1L;
 

@@ -1,14 +1,18 @@
 package de.kreth.clubhelper.personedit.config;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.vaadin.flow.shared.ApplicationConstants;
+
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import com.vaadin.flow.shared.ApplicationConstants;
 
 public class SecurityUtils {
     /**
@@ -28,9 +32,21 @@ public class SecurityUtils {
     }
 
     static boolean isUserLoggedIn() {
-	Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); //
+	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	return authentication != null //
 		&& !(authentication instanceof AnonymousAuthenticationToken) //
 		&& authentication.isAuthenticated(); //
+    }
+
+    static boolean isOnlyAuthenticatedForSelf() {
+	if (isUserLoggedIn()) {
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    List<String> authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+		    .collect(Collectors.toList());
+	    Arrays.asList("ROLE_admin", "ROLE_trainer");
+	    boolean containsAny = authorities.contains("ROLE_admin") || authorities.contains("ROLE_trainer");
+	    return !containsAny;
+	}
+	return false;
     }
 }

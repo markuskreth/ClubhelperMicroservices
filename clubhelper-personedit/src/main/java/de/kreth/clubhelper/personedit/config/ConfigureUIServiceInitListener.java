@@ -1,13 +1,15 @@
 package de.kreth.clubhelper.personedit.config;
 
-import org.springframework.stereotype.Component;
-
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 
+import org.springframework.stereotype.Component;
+
 import de.kreth.clubhelper.personedit.ui.MainView;
+import de.kreth.clubhelper.personedit.ui.PersonEditor;
 
 @Component
 public class ConfigureUIServiceInitListener implements VaadinServiceInitListener {
@@ -33,7 +35,12 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
 
 	if (isSecureAndNotAuthentificated(navigationTarget)) {
 	    event.rerouteTo("");
+	} else if (SecurityUtils.isOnlyAuthenticatedForSelf()) {
+	    RouteParameters parameters = new RouteParameters("personId", "2");
+//	    event.rerouteTo(PersonEditor.class, parameters);
+	    event.forwardTo(PersonEditor.class, parameters);
 	}
+
     }
 
     private boolean isSecureAndNotAuthentificated(Class<?> navigationTarget) {
