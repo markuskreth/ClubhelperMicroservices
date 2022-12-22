@@ -9,7 +9,7 @@ import de.kreth.property2java.processor.GenerateProperty2Java;
 
 @SpringBootApplication
 @EntityScan("de.kreth.clubhelper.entity")
-@GenerateProperty2Java(resources = "version.properties", format = Format.WithInnerPropertyResourceBundle)
+@GenerateProperty2Java(resources = "version.properties", format = Format.WithInnerPropertyLoader)
 public class ClubhelperModelApplication {
 
     public static void main(String[] args) {

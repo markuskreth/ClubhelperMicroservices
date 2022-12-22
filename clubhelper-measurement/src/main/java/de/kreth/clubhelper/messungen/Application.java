@@ -9,6 +9,7 @@ import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 
+import de.kreth.property2java.processor.Format;
 import de.kreth.property2java.processor.GenerateProperty2Java;
 
 /**
@@ -22,7 +23,7 @@ import de.kreth.property2java.processor.GenerateProperty2Java;
 @Theme(value = "clubhelper-measurement")
 @PWA(name = "clubhelper-measurement", shortName = "clubhelper-measurement", offlineResources = {})
 @NpmPackage(value = "line-awesome", version = "1.3.0")
-@GenerateProperty2Java(resources = { "version.properties" })
+@GenerateProperty2Java(resources = { "version.properties" }, format = Format.WithInnerPropertyLoader)
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
     private static final long serialVersionUID = -4437367246788527499L;
