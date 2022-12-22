@@ -36,7 +36,7 @@
 			<url>https://repo1.maven.org/maven2/</url>
 		</repository>
 		<repository>
-			<id>kreth-development</id>
+			<id>nexus.kreth-development.de</id>
 			<url>https://nexus.kreth-development.de/repository/maven-public/</url>
 		</repository>
 		<repository>
@@ -152,11 +152,11 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>nexus-snapshots</id>
+			<id>kreth.snapshots</id>
 			<url>https://nexus.kreth-development.de/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
-			<id>nexus-releases</id>
+			<id>kreth.releases</id>
 			<url>https://nexus.kreth-development.de/repository/maven-releases/</url>
 		</repository>
 	</distributionManagement>
