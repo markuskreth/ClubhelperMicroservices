@@ -126,6 +126,11 @@
 				<version>8.11.0</version>
 			</dependency>
 			<dependency>
+				<groupId>org.jfree</groupId>
+				<artifactId>jfreechart</artifactId>
+				<version>1.5.4</version>
+			</dependency>
+			<dependency>
 				<groupId>org.reflections</groupId>
 				<artifactId>reflections</artifactId>
 				<version>0.9.12</version>
@@ -166,9 +171,7 @@
 		<module>clubhelper-backend-model</module>
 		<module>clubhelper-attendance</module>
 		<module>clubhelper-personedit</module>
-		<!--
 		<module>clubhelper-measurement</module>
-		-->
 		<module>clubhelper-entrypoint</module>
 	</modules>
 

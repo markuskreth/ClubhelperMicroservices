@@ -5,62 +5,59 @@ import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.text.SimpleDateFormat;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-
+import de.kreth.clubhelper.data.Measurement;
 import de.kreth.clubhelper.data.MeasurementType;
+import de.kreth.clubhelper.messungen.remote.MeasurementBusiness;
 
 public class JFreeChartFixture {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
+		new JFreeChartFixture().init();
+	}
+	
+	private MeasurementChartGenerator generator;
+	private JLabel imageContent;
+	
+	
+	void init () throws IOException {
+		
+		generator = new MeasurementChartGenerator(MeasurementType.JumpHeightSeconds);
+		List<Measurement> initialData = parse();
+		generator.setMeasurements(initialData);
+		
+	    imageContent = new JLabel();
 
-		TimeSeries series = new TimeSeries(MeasurementType.JumpHeightSeconds.name());
-		series.add(new Day(30, 4, 2016), 13.11);
-		series.add(new Day(20, 11, 2016), 13.2);
-		series.add(new Day(6, 3, 2017), 12.80);
-		series.add(new Day(13, 12, 2021), 16.61);
-		TimeSeriesCollection data = new TimeSeriesCollection(series);
-	    
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
-        		"Sprunghöhen Nika", "Datum", "Sekunden", data, true, true, false);
-        XYPlot plot = (XYPlot) chart.getPlot();
-        XYLineAndShapeRenderer r = (XYLineAndShapeRenderer) plot.getRenderer();
-        r.setDefaultShapesVisible(true);
-        DateAxis domain = (DateAxis) plot.getDomainAxis();
-        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy");
-        domain.setDateFormatOverride(f);
-        domain.setVerticalTickLabels(true);
-	    JLabel imageContent = new JLabel();
-
-	    BufferedImage image = chart.createBufferedImage(300, 300);
+	    BufferedImage image = generator.getChartAsImage(300, 300);
 	    imageContent.setIcon(new ImageIcon(image));
-
 	    imageContent.addComponentListener(new ComponentAdapter() {
 	    	@Override
 	    	public void componentResized(ComponentEvent e) {
-	    		Dimension size = e.getComponent().getSize();
-	    	    BufferedImage image = chart.createBufferedImage(size.width, size.height);
-	    	    imageContent.setIcon(new ImageIcon(image));
-//	    	    imageContent.repaint();
+	    		update();
 	    	}
 		});
+	    
 	    JPanel content = new JPanel(new BorderLayout());
 	    content.add(imageContent, BorderLayout.CENTER);
-
+	    
 	    JFrame frame = new JFrame("chart");
 	    frame.setContentPane(content);
 	    frame.pack();
@@ -69,4 +66,47 @@ public class JFreeChartFixture {
 	    
 	}
 
+	void update() {
+		Dimension size = imageContent.getSize();
+	    BufferedImage image = generator.getChartAsImage(size.width, size.height);
+	    imageContent.setIcon(new ImageIcon(image));
+//	    imageContent.repaint();
+	}
+	
+	List<Measurement> parse() throws IOException {
+		List<Measurement> values = new ArrayList<>();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+		try (BufferedReader in = new BufferedReader(new StringReader(csv))) {
+			String line = in.readLine();
+			StringTokenizer tokenizer = new StringTokenizer(line);
+			tokenizer.nextToken();
+			List<LocalDateTime> dates = new ArrayList<>();
+			while (tokenizer.hasMoreTokens()) {
+				dates.add(LocalDate.parse(tokenizer.nextToken(), formatter).atTime(18, 0));				
+			}
+			while ((line = in.readLine()) != null) {
+				String[] cells = line.split("\t");
+				
+				String classification = cells[0];
+				for (int i=1; i<cells.length; i++) {
+					try {
+						double seconds = Double.parseDouble(cells[i]);
+						Measurement m = new Measurement();
+						m.setClassification(classification);
+						m.setMeasured(seconds);
+						m.setOnTime(dates.get(i - 1));
+						values.add(m);
+					} catch (NumberFormatException x) {
+						continue;
+					}
+				}
+			}
+		}
+		return values;
+	}
+	
+	String csv = "Datum	30.04.2016	20.11.2016	21.11.2016	06.03.2017	13.12.2021	11.11.2022\r\n"
+			+ "10Sprünge	13.11	13.20	12.72		16.61	17.11\r\n"
+			+ "10Hocken	11.82		12.49	12.80	\r\n"
+			+ "P3		11.6		12.1		15.77";
 }
