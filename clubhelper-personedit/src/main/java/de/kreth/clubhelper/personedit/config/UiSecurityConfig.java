@@ -7,7 +7,9 @@ import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,81 +23,79 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @KeycloakConfiguration
+@ConditionalOnProperty(name = "keycloak.enabled", havingValue = "true", matchIfMissing = true)
 public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
-    @Autowired
-    private KeycloakClientRequestFactory factory;
+	@Autowired
+	private KeycloakClientRequestFactory factory;
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) {
-	KeycloakAuthenticationProvider keyCloakAuthProvider = keycloakAuthenticationProvider();
-	keyCloakAuthProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
-	auth.authenticationProvider(keyCloakAuthProvider);
-    }
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) {
+		KeycloakAuthenticationProvider keyCloakAuthProvider = keycloakAuthenticationProvider();
+		keyCloakAuthProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
+		auth.authenticationProvider(keyCloakAuthProvider);
+	}
 
-    @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public KeycloakRestTemplate restTemplate() {
-	return new KeycloakRestTemplate(factory);
-    }
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 
-    @Bean
-    @Override
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-	return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-    }
+	public KeycloakRestTemplate restTemplate() {
+		return new KeycloakRestTemplate(factory);
+	}
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-	super.configure(http);
+	@Bean
+	@Override
+	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+	}
 
-	http.cors().and()
-		.csrf().disable()
-		.anonymous().disable()
+	@Override
+	public void configure(HttpSecurity http) throws Exception {
+		super.configure(http);
+
+		http.cors().and().csrf().disable().anonymous().disable()
 //		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
-		.authorizeRequests().requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-		.anyRequest().authenticated()
-		.and().exceptionHandling().accessDeniedPage("/accessDeniedPage");
-    }
+				.authorizeRequests().requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll().anyRequest()
+				.authenticated().and().exceptionHandling().accessDeniedPage("/accessDeniedPage");
+	}
 
-    @Bean
-    public CorsFilter corsFilter() {
-	CorsConfiguration config = new CorsConfiguration();
-	config.setAllowCredentials(true);
-	config.addAllowedOrigin("*");
-	config.addAllowedHeader("*");
-	config.addAllowedMethod("OPTIONS");
-	config.addAllowedMethod("GET");
-	config.addAllowedMethod("POST");
-	config.addAllowedMethod("PUT");
-	config.addAllowedMethod("DELETE");
-	config.applyPermitDefaultValues();
+	@Bean
+	public CorsFilter corsFilter() {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowCredentials(true);
+		config.addAllowedOrigin("*");
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("OPTIONS");
+		config.addAllowedMethod("GET");
+		config.addAllowedMethod("POST");
+		config.addAllowedMethod("PUT");
+		config.addAllowedMethod("DELETE");
+		config.applyPermitDefaultValues();
 
-	UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	source.registerCorsConfiguration("*", config);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("*", config);
 //	source.registerCorsConfiguration("/**", config);
-	return new CorsFilter(source);
-    }
+		return new CorsFilter(source);
+	}
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-	web.ignoring().antMatchers(
-		// Vaadin Flow static resources //
-		"/VAADIN/**",
-		// the standard favicon URI
-		"/favicon.ico",
-		// the robots exclusion standard
-		"/robots.txt",
-		// For Upgrade Vaadin 23
-		"/offline-stub.html",
-		"/sw-runtime-resources-precache.js",
-		// web application manifest //
-		"/manifest.webmanifest", "/sw.js", "/offline-page.html",
-		// (development mode) static resources //
-		"/frontend/**",
-		// (development mode) webjars //
-		"/webjars/**",
-		// (production mode) static resources //
-		"/frontend-es5/**", "/frontend-es6/**");
-    }
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers(
+				// Vaadin Flow static resources //
+				"/VAADIN/**",
+				// the standard favicon URI
+				"/favicon.ico",
+				// the robots exclusion standard
+				"/robots.txt",
+				// For Upgrade Vaadin 23
+				"/offline-stub.html", "/sw-runtime-resources-precache.js",
+				// web application manifest //
+				"/manifest.webmanifest", "/sw.js", "/offline-page.html",
+				// (development mode) static resources //
+				"/frontend/**",
+				// (development mode) webjars //
+				"/webjars/**",
+				// (production mode) static resources //
+				"/frontend-es5/**", "/frontend-es6/**");
+	}
 
 }
