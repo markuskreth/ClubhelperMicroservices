@@ -77,32 +77,37 @@ public class JFreeChartFixture {
 		List<Measurement> values = new ArrayList<>();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 		try (BufferedReader in = new BufferedReader(new StringReader(csv))) {
-			String line = in.readLine();
-			StringTokenizer tokenizer = new StringTokenizer(line);
-			tokenizer.nextToken();
-			List<LocalDateTime> dates = new ArrayList<>();
-			while (tokenizer.hasMoreTokens()) {
-				dates.add(LocalDate.parse(tokenizer.nextToken(), formatter).atTime(18, 0));				
-			}
-			while ((line = in.readLine()) != null) {
-				String[] cells = line.split("\t");
-				
-				String classification = cells[0];
-				for (int i=1; i<cells.length; i++) {
-					try {
-						double seconds = Double.parseDouble(cells[i]);
-						Measurement m = new Measurement();
-						m.setClassification(classification);
-						m.setMeasured(seconds);
-						m.setOnTime(dates.get(i - 1));
-						values.add(m);
-					} catch (NumberFormatException x) {
-						continue;
-					}
+			readMeasurements(values, formatter, in);
+		}
+		return values;
+	}
+
+	private void readMeasurements(List<Measurement> values, DateTimeFormatter formatter, BufferedReader in)
+			throws IOException {
+		String line = in.readLine();
+		StringTokenizer tokenizer = new StringTokenizer(line);
+		tokenizer.nextToken();
+		List<LocalDateTime> dates = new ArrayList<>();
+		while (tokenizer.hasMoreTokens()) {
+			dates.add(LocalDate.parse(tokenizer.nextToken(), formatter).atTime(18, 0));				
+		}
+		while ((line = in.readLine()) != null) {
+			String[] cells = line.split("\t");
+			
+			String classification = cells[0];
+			for (int i=1; i<cells.length; i++) {
+				try {
+					double seconds = Double.parseDouble(cells[i]);
+					Measurement m = new Measurement();
+					m.setClassification(classification);
+					m.setMeasured(seconds);
+					m.setOnTime(dates.get(i - 1));
+					values.add(m);
+				} catch (NumberFormatException x) {
+					continue;
 				}
 			}
 		}
-		return values;
 	}
 	
 	String csv = "Datum	30.04.2016	20.11.2016	21.11.2016	06.03.2017	13.12.2021	11.11.2022\r\n"

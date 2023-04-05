@@ -18,19 +18,19 @@ import de.kreth.clubhelper.model.dao.MeasurementDao;
 @PreAuthorize("hasRole('ROLE_trainer')")
 public class MeasurementController extends AbstractControllerPersonRelated<Measurement, MeasurementDao> {
 
-    public MeasurementController() {
-	super(Measurement.class);
-    }
-
-    @GetMapping("/types")
-    public Map<MeasurementType, Set<String>> getAllTypes() {
-
-	Map<MeasurementType, Set<String>> values = new HashMap<>();
-
-	for (MeasurementType measurementType : MeasurementType.values()) {
-	    Set<String> list = dao.findClassificationsByType(measurementType);
-	    values.put(measurementType, list);
+	public MeasurementController() {
+		super(Measurement.class);
 	}
+
+	@GetMapping("/types")
+	public Map<MeasurementType, Set<String>> getAllTypes() {
+
+		Map<MeasurementType, Set<String>> values = new HashMap<>();
+
+		for (MeasurementType measurementType : MeasurementType.values()) {
+			Set<String> list = dao.findClassificationsByType(measurementType);
+			values.put(measurementType, list);
+		}
 //	Iterable<Measurement> iterator = dao.findAll();
 //	for (Measurement measurement : iterator) {
 //	    Set<String> types;
@@ -42,6 +42,6 @@ public class MeasurementController extends AbstractControllerPersonRelated<Measu
 //	    }
 //	    types.add(measurement.getClassification());
 //	}
-	return values;
-    }
+		return values;
+	}
 }

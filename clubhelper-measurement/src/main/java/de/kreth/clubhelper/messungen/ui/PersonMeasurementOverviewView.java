@@ -23,6 +23,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -57,7 +58,7 @@ public class PersonMeasurementOverviewView extends Div implements HasUrlParamete
 
 		Button addButton = new Button("Hinzufügen", this::addMeasurement);
 
-		FormLayout layout = new FormLayout();
+		VerticalLayout layout = new VerticalLayout();
 		add(head);
 		chart = new Image();
 		
@@ -104,7 +105,7 @@ public class PersonMeasurementOverviewView extends Div implements HasUrlParamete
 			page.retrieveExtendedClientDetails(details -> {
 				int width = details.getWindowInnerWidth();
 				int height = details.getWindowInnerHeight();
-				height = Math.min(width, Math.min(height, 500));
+				height = Math.min(width, height);
 				updateChart(width, height);
 			});
 		}

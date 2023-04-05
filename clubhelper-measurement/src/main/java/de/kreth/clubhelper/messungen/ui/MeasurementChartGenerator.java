@@ -15,6 +15,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.time.TimeSeriesDataItem;
 
 import de.kreth.clubhelper.data.Measurement;
 import de.kreth.clubhelper.data.MeasurementType;
@@ -56,7 +57,10 @@ public class MeasurementChartGenerator {
 			series = new TimeSeries(classification);
 			timeSeries.put(classification, series);
 		}
-		series.add(day, measurement.getMeasured());
+		TimeSeriesDataItem changed = series.addOrUpdate(day, measurement.getMeasured());
+		if (changed != null && changed.getValue().doubleValue() > measurement.getMeasured()) {
+			series.addOrUpdate(day, changed.getValue().doubleValue());
+		}
 	}
 	
 	/**
