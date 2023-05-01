@@ -24,20 +24,20 @@ public interface MeasurementBusiness extends Business {
 
     Measurement store(Long personId, Measurement measurement);
 
-    Map<MeasurementType, Set<String>> getAllTypes();
+    Map<String, Set<String>> getAllTypes();
 
-	public static Map<MeasurementType, Map<String, List<Measurement>>> toMap(List<Measurement> measurements2) {
-		Map<MeasurementType, Map<String, List<Measurement>>> measurements = new HashMap<>();
+	public static Map<String, Map<String, List<Measurement>>> toMap(List<Measurement> measurements2) {
+		Map<String, Map<String, List<Measurement>>> measurements = new HashMap<>();
 
 		for (Measurement measurement : measurements2) {
 			MeasurementType measurementType = measurement.getMeasurementType();
 			String classification = measurement.getClassification();
 			Map<String, List<Measurement>> classificationMap;
-			if (measurements.containsKey(measurementType)) {
-				classificationMap = measurements.get(measurementType);
+			if (measurements.containsKey(measurementType.name())) {
+				classificationMap = measurements.get(measurementType.name());
 			} else {
 				classificationMap = new HashMap<>();
-				measurements.put(measurementType, classificationMap);
+				measurements.put(measurementType.name(), classificationMap);
 			}
 			List<Measurement> classifiationList;
 			if (classificationMap.containsKey(classification)) {

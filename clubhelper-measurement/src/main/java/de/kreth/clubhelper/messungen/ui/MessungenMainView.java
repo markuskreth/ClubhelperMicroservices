@@ -12,11 +12,11 @@ import de.kreth.clubhelper.vaadincomponents.views.PersonListView;
 @Route(value = "")
 public class MessungenMainView extends PersonListView<PersonMeasurementOverviewView> {
 
-    private static final long serialVersionUID = -1076655556793621082L;
+	private static final long serialVersionUID = -1076655556793621082L;
 
-    public MessungenMainView(@Autowired MeasurementBusiness measurementBusiness) {
-	super(measurementBusiness, PersonMeasurementOverviewView.class);
-	add(new FooterComponent());
-    }
+	public MessungenMainView(@Autowired MeasurementBusiness measurementBusiness) {
+		super(measurementBusiness, PersonMeasurementOverviewView.class);
+		add(new FooterComponent());
+	}
 
 }

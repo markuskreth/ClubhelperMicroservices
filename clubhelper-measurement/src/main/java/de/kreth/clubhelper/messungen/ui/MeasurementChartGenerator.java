@@ -2,7 +2,9 @@ package de.kreth.clubhelper.messungen.ui;
 
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,15 +21,41 @@ import org.jfree.data.time.TimeSeriesDataItem;
 
 import de.kreth.clubhelper.data.Measurement;
 import de.kreth.clubhelper.data.MeasurementType;
-import de.kreth.clubhelper.messungen.remote.MeasurementBusiness;
 
 public class MeasurementChartGenerator {
 
 	private final Map<String, TimeSeries> timeSeries;
+	private Zeitraum zeitraum = Zeitraum.ALL;
 	
+	public enum Zeitraum {
+		Months6("Letzte 6 Monate"),
+		JEAR1("Letzte 12 Monate"),
+		JEAR2("Letzte 2 Jahre"),
+		JEAR5("Letzte 5 Jahre"),
+//		JEAR10("Letzte 10 Jahre"),
+		ALL("Alle Messungen");
+		
+		final String text;
+		private Zeitraum(String text) {
+			this.text = text;
+		}
+		
+		public String getText() {
+			return text;
+		}
+	}
+
 	public MeasurementChartGenerator(MeasurementType type) {
 		super();
 		this.timeSeries = new HashMap<>();
+	}
+	
+	public void setZeitraum(Zeitraum zeitraum) {
+		this.zeitraum = zeitraum;
+	}
+	
+	public Zeitraum getZeitraum() {
+		return zeitraum;
 	}
 	
 	/**
@@ -36,9 +64,33 @@ public class MeasurementChartGenerator {
 	 */
 	public void setMeasurements(List<Measurement> measurements) {
 		timeSeries.clear();
-
+		LocalDateTime mustBeAfter;
+		
+		if (zeitraum != null && zeitraum != Zeitraum.ALL) {
+			switch (zeitraum) {
+			case JEAR1:
+				mustBeAfter = LocalDate.now().minusYears(1).atStartOfDay();
+				break;
+			case JEAR2:
+				mustBeAfter = LocalDate.now().minusYears(2).atStartOfDay();
+				break;
+			case JEAR5:
+				mustBeAfter = LocalDate.now().minusYears(6).atStartOfDay();
+				break;
+			case Months6:
+				mustBeAfter = LocalDate.now().minusMonths(6).atStartOfDay();
+				break;
+			default:
+				mustBeAfter = LocalDate.from(new Date(0).toInstant()).atStartOfDay();
+				break;
+			}
+		} else {
+			mustBeAfter = LocalDateTime.of(1970, 1, 1, 0, 0);
+		}
 		for (Measurement measurement : measurements) {
-			add(measurement);
+			if (measurement.getOnTime().isAfter(mustBeAfter)) {
+				add(measurement);
+			}
 		}
 	}
 	
