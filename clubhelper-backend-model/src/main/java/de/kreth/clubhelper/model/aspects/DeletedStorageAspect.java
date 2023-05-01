@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 
 import de.kreth.clubhelper.entity.BaseEntity;
 import de.kreth.clubhelper.entity.DeletedEntry;
+import de.kreth.clubhelper.model.config.LocalDateTimeProvider;
 import de.kreth.clubhelper.model.dao.DeletedEntriesDao;
-import de.kreth.clubhelper.model.utils.TimeProvider;
 
 @Aspect
 @Component
@@ -23,10 +23,10 @@ public class DeletedStorageAspect {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private DeletedEntriesDao deletedEntriesDao;
-    private TimeProvider time;
+    private LocalDateTimeProvider time;
 
     @Autowired
-    public void setTime(TimeProvider time) {
+    public void setTime(LocalDateTimeProvider time) {
 	this.time = time;
     }
 
@@ -43,16 +43,17 @@ public class DeletedStorageAspect {
     @AfterReturning(pointcut = "invocation()", returning = "deleted")
     public void storeDeleted(JoinPoint joinPoint, BaseEntity deleted) {
 
-	logger.debug("Deleted: " + deleted);
+	logger.debug("Deleted: {}", deleted);
 	Class<?> class1 = deleted.getClass();
 
 	while (!class1.getSuperclass().equals(Object.class)
-		&& !Modifier.isAbstract(class1.getSuperclass().getModifiers()))
+		&& !Modifier.isAbstract(class1.getSuperclass().getModifiers())) {
 	    class1 = class1.getSuperclass();
+	}
 
 	String tableName = class1.getSimpleName();
 	long id = deleted.getId();
-	LocalDateTime now = time.getNow();
+	LocalDateTime now = time.now();
 
 	DeletedEntry entry = new DeletedEntry();
 	entry.setTablename(tableName);
