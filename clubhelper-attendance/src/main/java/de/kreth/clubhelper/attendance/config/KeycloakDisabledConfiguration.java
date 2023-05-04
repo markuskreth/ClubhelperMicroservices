@@ -13,13 +13,13 @@ import org.springframework.web.client.RestTemplate;
 public class KeycloakDisabledConfiguration {
 
 	@Bean
-	public WebSecurityCustomizer webSecurityCustomizer() {
+	WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) -> web.ignoring().antMatchers("/**");
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public RestTemplate restTemplate() {
+	RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
 }
