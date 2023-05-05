@@ -16,7 +16,7 @@ import de.kreth.clubhelper.entity.Measurement;
 import de.kreth.clubhelper.entity.Person;
 
 @DataJpaTest()
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
 class StoreMeasurementTest {
 
     @Autowired
