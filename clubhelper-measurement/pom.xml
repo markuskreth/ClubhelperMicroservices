@@ -96,11 +96,6 @@
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
 		</dependency>
-		
-			<dependency>
-			  <groupId>de.kreth.property2java</groupId>
-			  <artifactId>PropertyToJavaGenerator</artifactId>
-			</dependency>
 	</dependencies>
 
 	<build>
