@@ -54,7 +54,6 @@ import de.kreth.clubhelper.vaadincomponents.groupfilter.GroupFilterListener;
 
 @Push
 @Route("")
-@PWA(name = "MTV Trampolin Anwesenheit", shortName = "Anwesenheit", description = "Dies ist eine App zur Erfassung von Anwesenheiten für die Trampolingruppe des MTV Groß-Buchholz.")
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 @PageTitle("Anwesenheit")
