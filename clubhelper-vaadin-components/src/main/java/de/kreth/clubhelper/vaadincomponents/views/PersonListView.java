@@ -3,6 +3,7 @@ package de.kreth.clubhelper.vaadincomponents.views;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ClickEvent;
@@ -15,10 +16,13 @@ import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.ItemClickEvent;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu.GridContextMenuItemClickEvent;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -35,7 +39,8 @@ public class PersonListView<T extends Component & HasUrlParameter<Long>> extends
 	final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private static final long serialVersionUID = 1L;
-
+	@Value("${personeditor.url:NONE}")
+	private String personeditorUrl;
 	private final PersonUiList personList;
 
 	private final Business restService;
@@ -71,7 +76,11 @@ public class PersonListView<T extends Component & HasUrlParameter<Long>> extends
 		Grid<Person> grid = new Grid<>();
 		grid.addColumn(Person::getPrename).setHeader("Vorname");
 		grid.addColumn(Person::getSurname).setHeader("Nachname");
-
+		if (withEditor()) {
+			GridContextMenu<Person> contextMenu = grid.addContextMenu();
+			contextMenu.addItem(new Button(VaadinIcon.PENCIL.create()), this::onEditClick);
+		}
+		
 		grid.setDataProvider(personList.getDataProvider());
 
 		filter.addValueChangeListener(this::valueChanged);
@@ -100,6 +109,30 @@ public class PersonListView<T extends Component & HasUrlParameter<Long>> extends
 		event.getSource().getUI().ifPresent(ui -> ui.navigate(personDetailClass, personId));
 	}
 
+	Button createEditorButton(Person p) {
+		Button b = new Button(VaadinIcon.PENCIL.create());
+		b.addClickListener(ev -> onEditClick(p));
+		b.getElement().setProperty("title", "Editor für " + p.getSurname() + ", " + p.getPrename());
+		b.addClassName("BUTTON_LINK");
+		return b;
+	}
+
+	private void onEditClick(GridContextMenuItemClickEvent<Person> ev) {
+		ev.getItem().ifPresent(p -> {
+			onEditClick(p);
+		});
+
+	}
+
+	private void onEditClick(Person p) {
+		logger.info("Opening Editor für Id=" + p.getId());
+		getUI().ifPresent(ui -> {
+			Page page = ui.getPage();
+			String url = editUrlForPersonId(p.getId());
+			page.open(url, "_self");
+		});
+	}
+
 	public void onMenuButtonClick(ClickEvent<Button> event) {
 		ContextMenu menu = new ContextMenu();
 		menu.setTarget(event.getSource());
@@ -122,6 +155,14 @@ public class PersonListView<T extends Component & HasUrlParameter<Long>> extends
 		dlg.add(new Text(
 				"Personeneditor ist eine App zur Erfassung und Änderung von Personen im Trampolin des MTV Groß-Buchholz."));
 		dlg.open();
+	}
+
+	private String editUrlForPersonId(Long personId) {
+		return this.personeditorUrl + "/" + personId;
+	}
+
+	private boolean withEditor() {
+		return !"NONE".equals(personeditorUrl);
 	}
 
 	private void refreshData() {
