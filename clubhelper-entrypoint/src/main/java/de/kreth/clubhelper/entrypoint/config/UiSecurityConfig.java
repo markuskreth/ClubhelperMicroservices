@@ -13,6 +13,7 @@ import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,80 +25,76 @@ import org.springframework.security.web.authentication.session.RegisterSessionAu
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
 @KeycloakConfiguration
+@ConditionalOnProperty(name = "keycloak.enabled", havingValue = "true", matchIfMissing = true)
 public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) {
-	KeycloakAuthenticationProvider keyCloakAuthProvider = keycloakAuthenticationProvider();
-	keyCloakAuthProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
-	auth.authenticationProvider(keyCloakAuthProvider);
-    }
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) {
+		KeycloakAuthenticationProvider keyCloakAuthProvider = keycloakAuthenticationProvider();
+		keyCloakAuthProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
+		auth.authenticationProvider(keyCloakAuthProvider);
+	}
 
-    @Bean
-    @Override
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-	return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-    }
+	@Bean
+	@Override
+	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+	}
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-	super.configure(http);
-	http.cors().and()
-		.addFilterAt(logoutFilter(), LogoutFilter.class)
-		.addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
-		.csrf().disable()
-		.authorizeRequests().requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-		.antMatchers("/login**").fullyAuthenticated()
+	@Override
+	public void configure(HttpSecurity http) throws Exception {
+		super.configure(http);
+		http.cors().and().addFilterAt(logoutFilter(), LogoutFilter.class)
+				.addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class).csrf().disable()
+				.authorizeRequests().requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
+				.antMatchers("/login**").fullyAuthenticated()
 //		.and().oauth2Login().loginProcessingUrl("/login")
 //		.and().formLogin().loginPage("/login").permitAll().successForwardUrl("/")
 //		.anyRequest().authenticated()
 //		.and().authorizeRequests().antMatchers("/login**").fullyAuthenticated()
-		.and()
-		.logout().addLogoutHandler(keycloakLogoutHandler()).deleteCookies("JSESSIONID")
-		.invalidateHttpSession(false)
-		.logoutUrl("/logout").logoutSuccessUrl("/");
+				.and().logout().addLogoutHandler(keycloakLogoutHandler()).deleteCookies("JSESSIONID")
+				.invalidateHttpSession(false).logoutUrl("/logout").logoutSuccessUrl("/");
 
-    }
+	}
 
-    @Bean
-    public LogoutFilter logoutFilter() throws Exception {
-	LogoutFilter logoutFilter = new LogoutFilter("/", keycloakLogoutHandler()) {
-	    @Override
-	    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-		    throws IOException, ServletException {
-		super.doFilter(request, response, chain);
-		if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
-		    if (requiresLogout(((HttpServletRequest) request), ((HttpServletResponse) response))) {
-			((HttpServletRequest) request).logout();
-		    }
-		}
-	    }
-	};
-	logoutFilter.setFilterProcessesUrl("/logout");
+	@Bean
+	public LogoutFilter logoutFilter() throws Exception {
+		LogoutFilter logoutFilter = new LogoutFilter("/", keycloakLogoutHandler()) {
+			@Override
+			public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+					throws IOException, ServletException {
+				super.doFilter(request, response, chain);
+				if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
+					if (requiresLogout(((HttpServletRequest) request), ((HttpServletResponse) response))) {
+						((HttpServletRequest) request).logout();
+					}
+				}
+			}
+		};
+		logoutFilter.setFilterProcessesUrl("/logout");
 
-	return logoutFilter;
-    }
+		return logoutFilter;
+	}
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-	web.ignoring().antMatchers(
-		// Vaadin Flow static resources //
-		"/VAADIN/**",
-		// the standard favicon URI
-		"/favicon.ico",
-		// the robots exclusion standard
-		"/robots.txt",
-		// For Upgrade Vaadin 23
-		"/offline-stub.html",
-		"/sw-runtime-resources-precache.js",
-		// web application manifest //
-		"/manifest.webmanifest", "/sw.js", "/offline-page.html",
-		// (development mode) static resources //
-		"/frontend/**",
-		// (development mode) webjars //
-		"/webjars/**",
-		// (production mode) static resources //
-		"/frontend-es5/**", "/frontend-es6/**");
-    }
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers(
+				// Vaadin Flow static resources //
+				"/VAADIN/**",
+				// the standard favicon URI
+				"/favicon.ico",
+				// the robots exclusion standard
+				"/robots.txt",
+				// For Upgrade Vaadin 23
+				"/offline-stub.html", "/sw-runtime-resources-precache.js",
+				// web application manifest //
+				"/manifest.webmanifest", "/sw.js", "/offline-page.html",
+				// (development mode) static resources //
+				"/frontend/**",
+				// (development mode) webjars //
+				"/webjars/**",
+				// (production mode) static resources //
+				"/frontend-es5/**", "/frontend-es6/**");
+	}
 
 }

@@ -20,11 +20,11 @@ import de.kreth.property2java.processor.GenerateProperty2Java;
 @PWA(name = "clubhelper", shortName = "clubhelper", offlineResources = {})
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
-    private static final long serialVersionUID = 7322641713861309390L;
+	private static final long serialVersionUID = 7322641713861309390L;
 
-    public static void main(String[] args) {
-	Locale.setDefault(Locale.GERMANY);
-	SpringApplication.run(Application.class, args);
-    }
+	public static void main(String[] args) {
+		Locale.setDefault(Locale.GERMANY);
+		SpringApplication.run(Application.class, args);
+	}
 
 }

@@ -19,51 +19,50 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(value = "docker.client.enabled", havingValue = "false", matchIfMissing = true)
 public class AppServiceResourceReader implements AppService {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Value("${resource:./clubhelper.apps.properties}")
-    private String propertyPath;
+	@Value("${resource:./clubhelper.apps.properties}")
+	private String propertyPath;
 
-    @Override
-    public List<ClubhelperApp> getAllRegisteredApps() {
+	@Override
+	public List<ClubhelperApp> getAllRegisteredApps() {
 
-	File file = new File(propertyPath);
-	logger.info("Loading resource: {}", file.getAbsolutePath());
-	try (BufferedReader in = new BufferedReader(new FileReader(file))) {
-
-	    return in.lines()
-		    .filter(l -> !l.isBlank())
-		    .map(String::trim)
-		    .filter(l -> !l.startsWith("#"))
-		    .filter(l -> !l.startsWith(";"))
-		    .map(this::lineToApp)
-		    .collect(Collectors.toList());
-
-	} catch (IOException e) {
-	    throw new UncheckedIOException(e);
+		File file = new File(propertyPath);
+		logger.info("Loading resource: {}", file.getAbsolutePath());
+		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+			return in.lines()
+					.filter(l -> !l.isBlank())
+					.map(String::trim)
+					.filter(l -> !l.startsWith("#"))
+					.filter(l -> !l.startsWith(";"))
+					.map(this::lineToApp)
+					.collect(Collectors.toList());
+			
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 	}
-    }
 
-    public String getPropertyPath() {
-	return propertyPath;
-    }
-
-    private ClubhelperApp lineToApp(String line) {
-	String[] values = line.split(";");
-	if (values.length == 2) {
-	    return new ClubhelperApp(values[1], values[0]);
+	public String getPropertyPath() {
+		return propertyPath;
 	}
-	String[] requiredRoles = Arrays.copyOfRange(values, 2, values.length);
-	return new ClubhelperApp(values[1], values[0], requiredRoles);
-    }
 
-    @Override
-    public boolean isEditable() {
-	return true;
-    }
+	private ClubhelperApp lineToApp(String line) {
+		String[] values = line.split(";");
+		if (values.length == 2) {
+			return new ClubhelperApp(values[1], values[0]);
+		}
+		String[] requiredRoles = Arrays.copyOfRange(values, 2, values.length);
+		return new ClubhelperApp(values[1], values[0], requiredRoles);
+	}
 
-    @Override
-    public void update(List<ClubhelperApp> apps) {
+	@Override
+	public boolean isEditable() {
+		return true;
+	}
 
-    }
+	@Override
+	public void update(List<ClubhelperApp> apps) {
+
+	}
 }

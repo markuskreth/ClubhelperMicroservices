@@ -1,6 +1,7 @@
 package de.kreth.clubhelper.entrypoint;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,76 +27,80 @@ import de.kreth.clubhelper.entrypoint.config.SecurityUtils;
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 public class MainView extends Div {
 
-    private static final long serialVersionUID = 1L;
-    private final List<ClubhelperApp> apps = new ArrayList<>();
-    private final AppService service;
+	private static final long serialVersionUID = 1L;
+	private final List<ClubhelperApp> apps = new ArrayList<>();
+	private final AppService service;
 
-    public MainView(@Autowired AppService service) {
-	this.service = service;
-	this.setSizeFull();
-	doRefresh();
-    }
-
-    public void doRefresh() {
-	this.removeAll();
-
-	SecurityContext context = SecurityContextHolder.getContext();
-	Authentication authentication = context.getAuthentication();
-	showUserInformation(authentication);
-	add(new Paragraph());
-	apps.clear();
-	List<ClubhelperApp> allRegisteredApps = service.getAllRegisteredApps();
-
-	apps.addAll(allRegisteredApps);
-
-	List<String> roles = authentication.getAuthorities().stream()
-		.map(GrantedAuthority::getAuthority)
-		.collect(Collectors.toList());
-
-	apps.stream()
-		.filter(a -> filterByAuthentication(a, roles))
-		.map(ClubhelperButton::createAppButton)
-		.forEach(MainView.this::add);
-	add(new Paragraph());
-	add(new FooterComponent());
-    }
-
-    private void showUserInformation(Authentication authentication) {
-	if (SecurityUtils.isUserLoggedIn()) {
-
-	    Object principal = authentication.getPrincipal();
-	    if (principal instanceof KeycloakPrincipal) {
-		@SuppressWarnings("unchecked")
-		KeycloakPrincipal<KeycloakSecurityContext> keycloak = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
-		KeycloakSecurityContext context = keycloak.getKeycloakSecurityContext();
-		AccessToken token = context.getToken();
-		StringBuilder text = new StringBuilder("Angemeldet: ");
-		text.append(token.getGivenName()).append(" ")
-			.append(token.getFamilyName()).append(" (")
-			.append(token.getEmail()).append(")");
-		add(new H2(text.toString()));
-		add(ClubhelperButton.createButton("/logout", "Abmelden"));
-	    } else {
-		add(new H2("Angemeldet: " + authentication.getName()));
-		add(ClubhelperButton.createButton("/logout", "Abmelden"));
-	    }
-	} else {
-	    add(ClubhelperButton.createButton("/login", "Anmelden"));
+	public MainView(@Autowired AppService service) {
+		this.service = service;
+		this.setSizeFull();
+		doRefresh();
 	}
-    }
 
-    private boolean filterByAuthentication(ClubhelperApp app, List<String> roles) {
-	if (app.validForAllRoles()) {
-	    return true;
+	public void doRefresh() {
+		this.removeAll();
+
+		SecurityContext context = SecurityContextHolder.getContext();
+		Authentication authentication = context.getAuthentication();
+		showUserInformation(authentication);
+		add(new Paragraph());
+		apps.clear();
+		List<ClubhelperApp> allRegisteredApps = service.getAllRegisteredApps();
+
+		apps.addAll(allRegisteredApps);
+
+		List<String> roles;
+		if (SecurityUtils.isUserLoggedIn()) {
+			roles = authentication.getAuthorities().stream()
+					.map(GrantedAuthority::getAuthority)
+					.collect(Collectors.toList());	
+		} else {
+			roles = Collections.emptyList();
+		}
+
+		apps.stream()
+			.filter(a -> filterByAuthentication(a, roles))
+			.map(ClubhelperButton::createAppButton)
+			.forEach(MainView.this::add);
+		add(new Paragraph());
+		add(new FooterComponent());
 	}
-	boolean isAuthenticated = false;
-	for (String string : roles) {
-	    if (app.validForRole(string)) {
-		isAuthenticated = true;
-		break;
-	    }
+
+	private void showUserInformation(Authentication authentication) {
+		if (SecurityUtils.isUserLoggedIn()) {
+
+			Object principal = authentication.getPrincipal();
+			if (principal instanceof KeycloakPrincipal) {
+				@SuppressWarnings("unchecked")
+				KeycloakPrincipal<KeycloakSecurityContext> keycloak = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
+				KeycloakSecurityContext context = keycloak.getKeycloakSecurityContext();
+				AccessToken token = context.getToken();
+				StringBuilder text = new StringBuilder("Angemeldet: ");
+				text.append(token.getGivenName()).append(" ").append(token.getFamilyName()).append(" (")
+						.append(token.getEmail()).append(")");
+				add(new H2(text.toString()));
+				add(ClubhelperButton.createButton("/logout", "Abmelden"));
+			} else {
+				add(new H2("Angemeldet: " + authentication.getName()));
+				add(ClubhelperButton.createButton("/logout", "Abmelden"));
+			}
+		} else {
+			add(ClubhelperButton.createButton("/login", "Anmelden"));
+		}
 	}
-	return isAuthenticated;
-    }
+
+	private boolean filterByAuthentication(ClubhelperApp app, List<String> roles) {
+		if (app.validForAllRoles()) {
+			return true;
+		}
+		boolean isAuthenticated = false;
+		for (String string : roles) {
+			if (app.validForRole(string)) {
+				isAuthenticated = true;
+				break;
+			}
+		}
+		return isAuthenticated;
+	}
 
 }

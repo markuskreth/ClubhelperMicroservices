@@ -4,10 +4,10 @@ import java.util.List;
 
 public interface AppService {
 
-    List<ClubhelperApp> getAllRegisteredApps();
+	List<ClubhelperApp> getAllRegisteredApps();
 
-    boolean isEditable();
+	boolean isEditable();
 
-    void update(List<ClubhelperApp> apps);
+	void update(List<ClubhelperApp> apps);
 
 }
