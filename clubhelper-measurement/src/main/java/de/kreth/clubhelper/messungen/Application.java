@@ -21,7 +21,7 @@ import de.kreth.property2java.processor.GenerateProperty2Java;
  */
 @SpringBootApplication
 @Theme(value = "clubhelper-measurement")
-@PWA(name = "clubhelper-measurement", shortName = "clubhelper-measurement", offlineResources = {})
+@PWA(name = "clubhelper-measurement", shortName = "measurement", offlineResources = {})
 @NpmPackage(value = "line-awesome", version = "1.3.0")
 @GenerateProperty2Java(resources = { "version.properties" }, format = Format.WithInnerPropertyLoader)
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {

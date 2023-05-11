@@ -17,9 +17,9 @@ import de.kreth.property2java.processor.GenerateProperty2Java;
 @GenerateProperty2Java(resources = { "version.properties" }, format = Format.WithInnerPropertyLoader)
 public class ClubhelperAttendanceApplication {
 
-    public static void main(String[] args) {
-	Locale.setDefault(Locale.GERMANY);
-	SpringApplication.run(ClubhelperAttendanceApplication.class, args);
-    }
+	public static void main(String[] args) {
+		Locale.setDefault(Locale.GERMANY);
+		SpringApplication.run(ClubhelperAttendanceApplication.class, args);
+	}
 
 }
