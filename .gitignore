@@ -13,4 +13,4 @@ buildNumber.properties
 .classpath
 .factorypath
 
-clubhelper-entrypoint/frontend/generated/
+*generated**

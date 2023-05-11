@@ -16,7 +16,7 @@ import de.kreth.clubhelper.entity.GroupDef;
 import de.kreth.clubhelper.entity.Person;
 
 @DataJpaTest()
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
 class LoadPersonsTest {
     @Autowired
     PersonDao personDao;

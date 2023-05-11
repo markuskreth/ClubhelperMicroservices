@@ -19,6 +19,7 @@ import javax.persistence.criteria.Root;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.TestPropertySource;
@@ -31,6 +32,7 @@ import de.kreth.clubhelper.model.testing.TestingDateTimeProvider;
 
 @DataJpaTest
 @TestPropertySource(locations = "classpath:/application.personcontroller.test.properties")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
 @Sql(scripts = "classpath:/schema.sql")
 class PersonControllerTest {
 

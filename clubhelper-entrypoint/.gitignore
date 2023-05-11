@@ -3,6 +3,9 @@
 .settings
 .project
 .classpath
+frontend/generated
+vite.generated.ts
+
 
 *.iml
 .DS_Store
