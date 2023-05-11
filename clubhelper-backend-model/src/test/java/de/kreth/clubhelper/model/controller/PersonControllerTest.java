@@ -23,7 +23,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 
 import de.kreth.clubhelper.entity.GroupDef;
 import de.kreth.clubhelper.entity.Person;
@@ -33,7 +32,6 @@ import de.kreth.clubhelper.model.testing.TestingDateTimeProvider;
 @DataJpaTest
 @TestPropertySource(locations = "classpath:/application.personcontroller.test.properties")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
-@Sql(scripts = "classpath:/schema.sql")
 class PersonControllerTest {
 
     @Autowired

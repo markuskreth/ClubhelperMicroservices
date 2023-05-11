@@ -10,33 +10,35 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import de.kreth.clubhelper.data.MeasurementType;
 import de.kreth.clubhelper.entity.Measurement;
 import de.kreth.clubhelper.entity.Person;
 
-@DataJpaTest()
+@DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
+@Sql(value = "classpath:/testdata.sql")
 class StoreMeasurementTest {
 
-    @Autowired
-    PersonDao personDao;
-    @Autowired
-    MeasurementDao measurementDao;
+	@Autowired
+	PersonDao personDao;
+	@Autowired
+	MeasurementDao measurementDao;
 
-    @Test
-    void testLoadPerson1() {
-	Optional<Person> person1 = personDao.findById(1L);
-	assertTrue(person1.isPresent(), "Person with id=1 not found!");
-    }
+	@Test
+	void testLoadPerson1() {
+		Optional<Person> person1 = personDao.findById(1L);
+		assertTrue(person1.isPresent(), "Person with id=1 not found!");
+	}
 
-    @Test
-    void insertMeasurement() {
-	Measurement m = new Measurement();
-	m.setPerson(personDao.findById(1L).get());
-	m.setMeasured(234.234);
-	m.setMeasurementType(MeasurementType.JumpHeightSeconds);
-	m.setOnTime(LocalDateTime.now());
-	assertNotNull(measurementDao.save(m));
-    }
+	@Test
+	void insertMeasurement() {
+		Measurement m = new Measurement();
+		m.setPerson(personDao.findById(1L).get());
+		m.setMeasured(234.234);
+		m.setMeasurementType(MeasurementType.JumpHeightSeconds);
+		m.setOnTime(LocalDateTime.now());
+		assertNotNull(measurementDao.save(m));
+	}
 }
