@@ -4,7 +4,6 @@ import java.util.Locale;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.server.PWA;
@@ -18,7 +17,7 @@ import de.kreth.property2java.processor.GenerateProperty2Java;
 @SpringBootApplication
 @GenerateProperty2Java(resources = { "version.properties" }, format = Format.WithInnerPropertyLoader)
 @PWA(name = "clubhelper", shortName = "clubhelper", offlineResources = {})
-public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
+public class Application implements AppShellConfigurator {
 
 	private static final long serialVersionUID = 7322641713861309390L;
 
