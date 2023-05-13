@@ -4,7 +4,7 @@
 
 	<groupId>de.kreth.clubhelper</groupId>
 	<artifactId>clubhelper.parent</artifactId>
-	<version>0.3.3-SNAPSHOT</version>
+	<version>0.3.3</version>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -177,5 +177,6 @@
 
 	<scm>
 		<developerConnection>scm:git:git@github.com:markuskreth/ClubhelperMicroservices.git</developerConnection>
-	</scm>
+	  <tag>clubhelper.parent-0.3.3</tag>
+  </scm>
 </project>
