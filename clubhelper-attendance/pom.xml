@@ -268,10 +268,4 @@
 
 	</profiles>
 	
-	<scm>
-		<url>scm:git:https://github.com/markuskreth/clubhelper-attendance.git</url>
-		<developerConnection>scm:git:https://github.com/markuskreth/clubhelper-attendance.git</developerConnection>
-		<connection>scm:git:https://github.com/markuskreth/clubhelper-attendance.git</connection>
-    <tag>clubhelper.parent-0.3.1</tag>
-  </scm>
 </project>

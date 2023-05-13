@@ -176,6 +176,6 @@
 	</modules>
 
 	<scm>
-		<developerConnection>scm:git:https://github.com/markuskreth/ClubhelperMicroservices.git</developerConnection>
+		<developerConnection>scm:git:git@github.com:markuskreth/ClubhelperMicroservices.git</developerConnection>
 	</scm>
 </project>

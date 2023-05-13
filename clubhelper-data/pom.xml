@@ -26,10 +26,4 @@
 		</dependency>
 	</dependencies>
 	
-	<scm>
-		<url>scm:git:https://github.com/markuskreth/clubhelper-data.git</url>
-		<developerConnection>scm:git:https://github.com/markuskreth/clubhelper-data.git</developerConnection>
-		<connection>scm:git:https://github.com/markuskreth/clubhelper-data.git</connection>
-    <tag>clubhelper.parent-0.3.1</tag>
-  </scm>
 </project>
