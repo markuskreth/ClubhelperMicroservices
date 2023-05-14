@@ -1,0 +1,1 @@
+docker run -it --rm --name clubhelper -v "$(pwd)":/home/markus/docker-compose-executions/clubhelper/ClubhelperMicroservices -v /home/markus/.m2:/root/.m2 -v /mnt/storagespace/maven_repository:/root/.m2/repository -w /home/markus/docker-compose-executions/clubhelper/ClubhelperMicroservices maven:3.9.1-eclipse-temurin-17 mvn -Pproduction install
