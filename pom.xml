@@ -24,15 +24,15 @@
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
 	</properties>
-
+<!-- 
 	<repositories>
 		<repository>
 			<id>central</id>
 			<url>https://repo1.maven.org/maven2/</url>
 		</repository>
 		<repository>
-			<id>nexus.kreth-development.de</id>
-			<url>https://nexus.kreth-development.de/repository/maven-public/</url>
+			<id>nexus.markuskreth.de</id>
+			<url>https://nexus.markuskreth.de/repository/maven-public/</url>
 		</repository>
 		<repository>
 			<id>Vaadin Directory</id>
@@ -42,7 +42,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
+-->
 	<pluginRepositories>
 		<!-- Main Maven repository -->
 		<pluginRepository>
@@ -146,11 +146,11 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>kreth.snapshots</id>
-			<url>https://nexus.kreth-development.de/repository/maven-snapshots/</url>
+			<url>https://nexus.markuskreth.de/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
 			<id>kreth.releases</id>
-			<url>https://nexus.kreth-development.de/repository/maven-releases/</url>
+			<url>https://nexus.markuskreth.de/repository/maven-releases/</url>
 		</repository>
 	</distributionManagement>
 
