@@ -21,47 +21,47 @@ import de.kreth.clubhelper.model.dao.DeletedEntriesDao;
 @Component
 public class DeletedStorageAspect {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private DeletedEntriesDao deletedEntriesDao;
-    private LocalDateTimeProvider time;
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	private DeletedEntriesDao deletedEntriesDao;
+	private LocalDateTimeProvider time;
 
-    @Autowired
-    public void setTime(LocalDateTimeProvider time) {
-	this.time = time;
-    }
-
-    @Autowired
-    public DeletedStorageAspect(DeletedEntriesDao deletedEntriesDao) {
-	super();
-	this.deletedEntriesDao = deletedEntriesDao;
-    }
-
-    @Pointcut("execution (public * de.kreth.clubhelper.model.controller.AbstractController.delete(..))")
-    private void invocation() {
-    }
-
-    @AfterReturning(pointcut = "invocation()", returning = "deleted")
-    public void storeDeleted(JoinPoint joinPoint, BaseEntity deleted) {
-
-	logger.debug("Deleted: {}", deleted);
-	Class<?> class1 = deleted.getClass();
-
-	while (!class1.getSuperclass().equals(Object.class)
-		&& !Modifier.isAbstract(class1.getSuperclass().getModifiers())) {
-	    class1 = class1.getSuperclass();
+	@Autowired
+	public void setTime(LocalDateTimeProvider time) {
+		this.time = time;
 	}
 
-	String tableName = class1.getSimpleName();
-	long id = deleted.getId();
-	LocalDateTime now = time.now();
+	@Autowired
+	public DeletedStorageAspect(DeletedEntriesDao deletedEntriesDao) {
+		super();
+		this.deletedEntriesDao = deletedEntriesDao;
+	}
 
-	DeletedEntry entry = new DeletedEntry();
-	entry.setTablename(tableName);
-	entry.setEntryId(id);
-	entry.setChanged(now);
-	entry.setCreated(now);
-	logger.info("Inserted Deleteentry: {}", entry);
-	deletedEntriesDao.save(entry);
-    }
+	@Pointcut("execution (public * de.kreth.clubhelper.model.controller.AbstractController.delete(..))")
+	private void invocation() {
+	}
+
+	@AfterReturning(pointcut = "invocation()", returning = "deleted")
+	public void storeDeleted(JoinPoint joinPoint, BaseEntity deleted) {
+
+		logger.debug("Deleted: {}", deleted);
+		Class<?> class1 = deleted.getClass();
+
+		while (!class1.getSuperclass().equals(Object.class)
+				&& !Modifier.isAbstract(class1.getSuperclass().getModifiers())) {
+			class1 = class1.getSuperclass();
+		}
+
+		String tableName = class1.getSimpleName();
+		long id = deleted.getId();
+		LocalDateTime now = time.now();
+
+		DeletedEntry entry = new DeletedEntry();
+		entry.setTablename(tableName);
+		entry.setEntryId(id);
+		entry.setChanged(now);
+		entry.setCreated(now);
+		logger.info("Inserted Deleteentry: {}", entry);
+		deletedEntriesDao.save(entry);
+	}
 
 }

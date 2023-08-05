@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class OpenUrlLoggerAspect extends AbstractLoggerAspect {
 
-    @Pointcut("execution (public * com.vaadin.flow.component.page.Page.open(..))")
-    private void invocation() {
-    }
+	@Pointcut("execution (public * com.vaadin.flow.component.page.Page.open(..))")
+	private void invocation() {
+	}
 
-    @Before("invocation()")
-    public void logPageOpen(JoinPoint joinPoint) {
-	log(INFO, joinPoint);
-    }
+	@Before("invocation()")
+	public void logPageOpen(JoinPoint joinPoint) {
+		log(INFO, joinPoint);
+	}
 
 }

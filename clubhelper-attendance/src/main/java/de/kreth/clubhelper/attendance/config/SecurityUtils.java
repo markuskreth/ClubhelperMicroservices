@@ -2,13 +2,13 @@ package de.kreth.clubhelper.attendance.config;
 
 import java.util.stream.Stream;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import com.vaadin.flow.shared.ApplicationConstants;
 
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import com.vaadin.flow.shared.ApplicationConstants;
 
 public class SecurityUtils {
 	/**
@@ -26,7 +26,7 @@ public class SecurityUtils {
 				.anyMatch(r -> r.getIdentifier().equals(parameterValue));
 	}
 
-	static boolean isUserLoggedIn() {
+	public static boolean isUserLoggedIn() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); //
 		return authentication != null //
 				&& !(authentication instanceof AnonymousAuthenticationToken) //

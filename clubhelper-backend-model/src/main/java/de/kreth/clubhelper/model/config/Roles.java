@@ -2,9 +2,7 @@ package de.kreth.clubhelper.model.config;
 
 public enum Roles {
 
-	TEILNEHMER("user"), 
-	TRAINER("trainer"),
-	ADMINISTRATOR("admin");
+	TEILNEHMER("user"), TRAINER("trainer"), ADMINISTRATOR("admin");
 
 	private final String role;
 

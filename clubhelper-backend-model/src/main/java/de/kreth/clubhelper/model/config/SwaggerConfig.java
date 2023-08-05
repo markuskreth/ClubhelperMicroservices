@@ -35,36 +35,31 @@ import io.swagger.v3.oas.models.info.License;
 @Configuration
 public class SwaggerConfig {
 
-    @Bean
-    OpenAPI customOpenAPI() {
+	@Bean
+	OpenAPI customOpenAPI() {
 
-	Info info = new Info()
-		.title("REST Clubhelper Api")
-		.version(Version_Properties.PROJECT_VERSION.getText())
-		.termsOfService("Clubhelper backend terms of service")
-		.description("This is REST API documentation of the Clubhelper backend.")
-		.license(createLicense())
-		.contact(createContact());
+		Info info = new Info().title("REST Clubhelper Api").version(Version_Properties.PROJECT_VERSION.getText())
+				.termsOfService("Clubhelper backend terms of service")
+				.description("This is REST API documentation of the Clubhelper backend.").license(createLicense())
+				.contact(createContact());
 
-	return new OpenAPI()
-		.components(new Components())
-		.info(info);
-    }
+		return new OpenAPI().components(new Components()).info(info);
+	}
 
-    private Contact createContact() {
-	Contact clubhelperContact = new Contact();
-	clubhelperContact.setName("Markus Kreth");
-	clubhelperContact.setEmail("markus.kreth@web.de");
-	clubhelperContact.setUrl("https://github.com/markuskreth/ClubhelperMicroservices");
-	return clubhelperContact;
-    }
+	private Contact createContact() {
+		Contact clubhelperContact = new Contact();
+		clubhelperContact.setName("Markus Kreth");
+		clubhelperContact.setEmail("markus.kreth@web.de");
+		clubhelperContact.setUrl("https://github.com/markuskreth/ClubhelperMicroservices");
+		return clubhelperContact;
+	}
 
-    private License createLicense() {
-	License clubhelperLicense = new License();
-	clubhelperLicense.setName("The MIT License (MIT)");
-	clubhelperLicense.setUrl("http://opensource.org/licenses/MIT");
-	clubhelperLicense.setExtensions(Collections.emptyMap());
-	return clubhelperLicense;
-    }
+	private License createLicense() {
+		License clubhelperLicense = new License();
+		clubhelperLicense.setName("The MIT License (MIT)");
+		clubhelperLicense.setUrl("http://opensource.org/licenses/MIT");
+		clubhelperLicense.setExtensions(Collections.emptyMap());
+		return clubhelperLicense;
+	}
 
 }

@@ -9,8 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ThreadPoolErrors extends ThreadPoolExecutor {
 
-	public final List<Throwable> exceptions = Collections
-			.synchronizedList(new ArrayList<>());
+	public final List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<>());
 
 	public ThreadPoolErrors(int threadCount) {
 		super(Math.min(3, threadCount), // core threads
@@ -45,8 +44,7 @@ public class ThreadPoolErrors extends ThreadPoolExecutor {
 	}
 
 	private boolean isRunningWithoutException() {
-		return isTerminated() == false && getActiveCount() > 0
-				&& exceptions.isEmpty();
+		return isTerminated() == false && getActiveCount() > 0 && exceptions.isEmpty();
 	}
 
 }

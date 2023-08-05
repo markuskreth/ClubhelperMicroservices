@@ -15,20 +15,20 @@ import de.kreth.clubhelper.data.Person;
 
 public interface Business {
 
-    List<Person> getPersons(OrderBy order);
+	List<Person> getPersons(OrderBy order);
 
-    List<PersonAttendance> getAttendance(LocalDate date);
+	List<PersonAttendance> getAttendance(LocalDate date);
 
-    List<Attendance> getAttendanceBetween(LocalDate start, LocalDate end);
+	List<Attendance> getAttendanceBetween(LocalDate start, LocalDate end);
 
-    Authentication getCurrent();
+	Authentication getCurrent();
 
-    PersonAttendance sendAttendance(PersonAttendance person, LocalDate attendanceDate, Boolean isAttendant);
+	PersonAttendance sendAttendance(PersonAttendance person, LocalDate attendanceDate, Boolean isAttendant);
 
-    List<Contact> getContacts(Long personId);
+	List<Contact> getContacts(Long personId);
 
-    Adress getAdress(Long personId);
+	Adress getAdress(Long personId);
 
-    List<GroupDef> getAllGroups();
+	List<GroupDef> getAllGroups();
 
 }

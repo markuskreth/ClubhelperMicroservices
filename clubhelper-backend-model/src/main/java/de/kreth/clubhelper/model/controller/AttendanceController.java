@@ -27,59 +27,59 @@ import de.kreth.clubhelper.model.dao.PersonDao;
 @PreAuthorize("hasRole('ROLE_trainer')")
 public class AttendanceController {
 
-    @Autowired
-    private AttendanceDao attendanceDao;
+	@Autowired
+	private AttendanceDao attendanceDao;
 
-    @Autowired
-    private PersonDao personDao;
+	@Autowired
+	private PersonDao personDao;
 
-    @GetMapping(value = "/{date}")
-    @ResponseBody
-    public List<Attendance> getAttendencesOn(@PathVariable("date") @DateTimeFormat(iso = ISO.DATE) LocalDate date) {
-	List<Attendance> findByOnDate = attendanceDao.findByOnDate(date);
-	return findByOnDate;
-    }
-
-    @GetMapping(value = "/between/{start}/{end}")
-    @ResponseBody
-    public List<Attendance> getAttendencesBetween(
-	    @PathVariable("start") @DateTimeFormat(iso = ISO.DATE) LocalDate start,
-	    @PathVariable("end") @DateTimeFormat(iso = ISO.DATE) LocalDate end) {
-	List<Attendance> findByOnDate = attendanceDao.findByOnDateBetween(start, end);
-	return findByOnDate;
-    }
-
-    @GetMapping(value = "/for/{personId}")
-    @ResponseBody
-    public List<Attendance> getAttendencesFor(@PathVariable("personId") Long personId) {
-	return attendanceDao.findByPersonId(personId);
-    }
-
-    @PostMapping(value = "/for/{id}")
-    @ResponseBody
-    public Attendance post(@PathVariable("id") Long id, @RequestBody(required = false) LocalDate onDate) {
-	Attendance att = new Attendance();
-	if (onDate == null) {
-	    att.setOnDate(LocalDate.now());
-	} else {
-	    att.setOnDate(onDate);
+	@GetMapping(value = "/{date}")
+	@ResponseBody
+	public List<Attendance> getAttendencesOn(@PathVariable("date") @DateTimeFormat(iso = ISO.DATE) LocalDate date) {
+		List<Attendance> findByOnDate = attendanceDao.findByOnDate(date);
+		return findByOnDate;
 	}
-	att.setPerson(personDao.findById(id).orElseThrow(() -> new RuntimeException("Person not found by id=" + id)));
-	LocalDateTime now = LocalDateTime.now();
-	att.setChanged(now);
-	att.setCreated(now);
-	attendanceDao.save(att);
-	return att;
-    }
 
-    @DeleteMapping("/{id}/{onDate}")
-    public void delete(@PathVariable("id") Long personId,
-	    @PathVariable("onDate") @DateTimeFormat(iso = ISO.DATE) LocalDate onDate) {
+	@GetMapping(value = "/between/{start}/{end}")
+	@ResponseBody
+	public List<Attendance> getAttendencesBetween(
+			@PathVariable("start") @DateTimeFormat(iso = ISO.DATE) LocalDate start,
+			@PathVariable("end") @DateTimeFormat(iso = ISO.DATE) LocalDate end) {
+		List<Attendance> findByOnDate = attendanceDao.findByOnDateBetween(start, end);
+		return findByOnDate;
+	}
 
-	Person person = personDao.findById(personId)
-		.orElseThrow(() -> new RuntimeException("Person not found by id=" + personId));
-	Attendance attendance = attendanceDao.findByPersonAndOnDate(person, onDate);
-	attendance.setDeleted(LocalDateTime.now());
-	attendanceDao.delete(attendance);
-    }
+	@GetMapping(value = "/for/{personId}")
+	@ResponseBody
+	public List<Attendance> getAttendencesFor(@PathVariable("personId") Long personId) {
+		return attendanceDao.findByPersonId(personId);
+	}
+
+	@PostMapping(value = "/for/{id}")
+	@ResponseBody
+	public Attendance post(@PathVariable("id") Long id, @RequestBody(required = false) LocalDate onDate) {
+		Attendance att = new Attendance();
+		if (onDate == null) {
+			att.setOnDate(LocalDate.now());
+		} else {
+			att.setOnDate(onDate);
+		}
+		att.setPerson(personDao.findById(id).orElseThrow(() -> new RuntimeException("Person not found by id=" + id)));
+		LocalDateTime now = LocalDateTime.now();
+		att.setChanged(now);
+		att.setCreated(now);
+		attendanceDao.save(att);
+		return att;
+	}
+
+	@DeleteMapping("/{id}/{onDate}")
+	public void delete(@PathVariable("id") Long personId,
+			@PathVariable("onDate") @DateTimeFormat(iso = ISO.DATE) LocalDate onDate) {
+
+		Person person = personDao.findById(personId)
+				.orElseThrow(() -> new RuntimeException("Person not found by id=" + personId));
+		Attendance attendance = attendanceDao.findByPersonAndOnDate(person, onDate);
+		attendance.setDeleted(LocalDateTime.now());
+		attendanceDao.delete(attendance);
+	}
 }

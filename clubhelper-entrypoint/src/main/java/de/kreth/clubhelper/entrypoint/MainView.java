@@ -3,22 +3,21 @@ package de.kreth.clubhelper.entrypoint;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.router.Route;
-
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.representations.AccessToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import de.kreth.clubhelper.entrypoint.config.SecurityUtils;
 
@@ -70,14 +69,13 @@ public class MainView extends Div {
 		if (SecurityUtils.isUserLoggedIn()) {
 
 			Object principal = authentication.getPrincipal();
-			if (principal instanceof KeycloakPrincipal) {
-				@SuppressWarnings("unchecked")
-				KeycloakPrincipal<KeycloakSecurityContext> keycloak = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
-				KeycloakSecurityContext context = keycloak.getKeycloakSecurityContext();
-				AccessToken token = context.getToken();
+			if (principal instanceof OAuth2AuthenticationToken) {
+				OAuth2AuthenticationToken keycloak = (OAuth2AuthenticationToken) principal;
+				Map<String, Object> attributes = keycloak.getPrincipal().getAttributes();
+				
 				StringBuilder text = new StringBuilder("Angemeldet: ");
-				text.append(token.getGivenName()).append(" ").append(token.getFamilyName()).append(" (")
-						.append(token.getEmail()).append(")");
+				text.append(attributes.get("GivenName")).append(" ").append(attributes.get("FamilyName")).append(" (")
+						.append(attributes.get("Email")).append(")");
 				add(new H2(text.toString()));
 				add(ClubhelperButton.createButton("/logout", "Abmelden"));
 			} else {

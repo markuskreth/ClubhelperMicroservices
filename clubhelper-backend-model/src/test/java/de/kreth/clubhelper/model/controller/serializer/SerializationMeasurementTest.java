@@ -19,33 +19,33 @@ import de.kreth.clubhelper.entity.Person;
 @JsonTest
 class SerializationMeasurementTest {
 
-    @Autowired
-    private ObjectMapper objectMapper;
-    private LocalDateTime now;
+	@Autowired
+	private ObjectMapper objectMapper;
+	private LocalDateTime now;
 
-    @BeforeEach
-    void init() {
-	now = LocalDateTime.now();
-    }
+	@BeforeEach
+	void init() {
+		now = LocalDateTime.now();
+	}
 
-    @Test
-    void serializeAndDeserializeMeasurement() throws IOException {
-	Measurement m = new Measurement();
-	m.setChanged(now);
-	m.setCreated(now);
-	m.setClassification("Kür");
-	m.setMeasurementType(MeasurementType.JumpHeightSeconds);
-	m.setOnTime(now);
-	m.setId(3L);
-	m.setMeasured(17.3);
-	m.setPerson(new Person());
+	@Test
+	void serializeAndDeserializeMeasurement() throws IOException {
+		Measurement m = new Measurement();
+		m.setChanged(now);
+		m.setCreated(now);
+		m.setClassification("Kür");
+		m.setMeasurementType(MeasurementType.JumpHeightSeconds);
+		m.setOnTime(now);
+		m.setId(3L);
+		m.setMeasured(17.3);
+		m.setPerson(new Person());
 
-	String json = objectMapper.writeValueAsString(m);
-	de.kreth.clubhelper.data.Measurement data = objectMapper.readValue(json,
-		de.kreth.clubhelper.data.Measurement.class);
-	assertEquals(m.getClassification(), data.getClassification());
-	assertEquals(m.getMeasured(), data.getMeasured());
-	assertEquals(m.getOnTime(), data.getOnTime());
-	assertEquals(m.getChanged(), data.getChanged());
-    }
+		String json = objectMapper.writeValueAsString(m);
+		de.kreth.clubhelper.data.Measurement data = objectMapper.readValue(json,
+				de.kreth.clubhelper.data.Measurement.class);
+		assertEquals(m.getClassification(), data.getClassification());
+		assertEquals(m.getMeasured(), data.getMeasured());
+		assertEquals(m.getOnTime(), data.getOnTime());
+		assertEquals(m.getChanged(), data.getChanged());
+	}
 }

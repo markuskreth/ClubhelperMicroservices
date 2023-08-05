@@ -10,8 +10,8 @@ import de.kreth.clubhelper.model.dao.DeletedEntriesDao;
 @RequestMapping("/deletedentries")
 public class DeletedEntriesController extends AbstractController<DeletedEntry, DeletedEntriesDao> {
 
-    public DeletedEntriesController() {
-	super(DeletedEntry.class);
-    }
+	public DeletedEntriesController() {
+		super(DeletedEntry.class);
+	}
 
 }

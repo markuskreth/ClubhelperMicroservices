@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 class LocalDateImpl implements LocalDateProvider {
 
-    @Override
-    public LocalDate today() {
-	return LocalDate.now();
-    }
+	@Override
+	public LocalDate today() {
+		return LocalDate.now();
+	}
 }

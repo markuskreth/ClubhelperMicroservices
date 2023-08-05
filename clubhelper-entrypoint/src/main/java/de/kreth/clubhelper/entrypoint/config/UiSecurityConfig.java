@@ -1,84 +1,36 @@
 package de.kreth.clubhelper.entrypoint.config;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
-@KeycloakConfiguration
-@ConditionalOnProperty(name = "keycloak.enabled", havingValue = "true", matchIfMissing = true)
-public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+@Configuration
+public class UiSecurityConfig {
 
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) {
-		KeycloakAuthenticationProvider keyCloakAuthProvider = keycloakAuthenticationProvider();
-		keyCloakAuthProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
-		auth.authenticationProvider(keyCloakAuthProvider);
+	@Bean
+	public CorsFilter corsFilter() {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowCredentials(true);
+		config.addAllowedOrigin("*");
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("OPTIONS");
+		config.addAllowedMethod("GET");
+		config.addAllowedMethod("POST");
+		config.addAllowedMethod("PUT");
+		config.addAllowedMethod("DELETE");
+		config.applyPermitDefaultValues();
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("*", config);
+		return new CorsFilter(source);
 	}
 
 	@Bean
-	@Override
-	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-	}
-
-	@Override
-	public void configure(HttpSecurity http) throws Exception {
-		super.configure(http);
-		http.cors().and().addFilterAt(logoutFilter(), LogoutFilter.class)
-				.addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class).csrf().disable()
-				.authorizeRequests().requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-				.antMatchers("/login**").fullyAuthenticated()
-//		.and().oauth2Login().loginProcessingUrl("/login")
-//		.and().formLogin().loginPage("/login").permitAll().successForwardUrl("/")
-//		.anyRequest().authenticated()
-//		.and().authorizeRequests().antMatchers("/login**").fullyAuthenticated()
-				.and().logout().addLogoutHandler(keycloakLogoutHandler()).deleteCookies("JSESSIONID")
-				.invalidateHttpSession(false).logoutUrl("/logout").logoutSuccessUrl("/");
-
-	}
-
-	@Bean
-	public LogoutFilter logoutFilter() throws Exception {
-		LogoutFilter logoutFilter = new LogoutFilter("/", keycloakLogoutHandler()) {
-			@Override
-			public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-					throws IOException, ServletException {
-				super.doFilter(request, response, chain);
-				if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
-					if (requiresLogout(((HttpServletRequest) request), ((HttpServletResponse) response))) {
-						((HttpServletRequest) request).logout();
-					}
-				}
-			}
-		};
-		logoutFilter.setFilterProcessesUrl("/logout");
-
-		return logoutFilter;
-	}
-
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers(
+	public WebSecurityCustomizer webSecurityCustomizer() {
+		return (web) -> web.ignoring().requestMatchers(
 				// Vaadin Flow static resources //
 				"/VAADIN/**",
 				// the standard favicon URI

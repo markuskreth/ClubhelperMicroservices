@@ -12,8 +12,8 @@ import de.kreth.clubhelper.model.dao.PersonNoteDao;
 @PreAuthorize("hasRole('ROLE_trainer')")
 public class NoteController extends AbstractControllerPersonRelated<PersonNote, PersonNoteDao> {
 
-    protected NoteController() {
-	super(PersonNote.class);
-    }
+	protected NoteController() {
+		super(PersonNote.class);
+	}
 
 }

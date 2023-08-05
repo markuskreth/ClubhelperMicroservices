@@ -20,38 +20,38 @@ import de.kreth.clubhelper.model.dao.ContactDao;
 @PreAuthorize("isAuthenticated()")
 public class ContactController extends AbstractControllerPersonRelated<Contact, ContactDao> {
 
-    private static final PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private static final PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public ContactController() {
-	super(Contact.class);
-    }
-
-    @Override
-    protected void beforeSave(Contact toSave) {
-	super.beforeSave(toSave);
-	ContactType type = ContactType.valueByName(toSave.getType());
-	switch (type) {
-	case EMAIL:
-	    toSave.setValue(toSave.getValue().strip());
-	    break;
-	case MOBILE:
-	case PHONE:
-	    updatePhoneNumber(toSave);
-	    break;
-	default:
-	    break;
+	public ContactController() {
+		super(Contact.class);
 	}
-    }
 
-    private void updatePhoneNumber(Contact toSave) {
-	try {
-	    PhoneNumber number = phoneUtil.parse(toSave.getValue(), "DE");
-	    if (phoneUtil.isValidNumber(number)) {
-		toSave.setValue(phoneUtil.format(number, PhoneNumberFormat.NATIONAL));
-	    }
-	} catch (NumberParseException e) {
-	    logger.warn("Error parsing Phone Number: {}", toSave);
+	@Override
+	protected void beforeSave(Contact toSave) {
+		super.beforeSave(toSave);
+		ContactType type = ContactType.valueByName(toSave.getType());
+		switch (type) {
+		case EMAIL:
+			toSave.setValue(toSave.getValue().strip());
+			break;
+		case MOBILE:
+		case PHONE:
+			updatePhoneNumber(toSave);
+			break;
+		default:
+			break;
+		}
 	}
-    }
+
+	private void updatePhoneNumber(Contact toSave) {
+		try {
+			PhoneNumber number = phoneUtil.parse(toSave.getValue(), "DE");
+			if (phoneUtil.isValidNumber(number)) {
+				toSave.setValue(phoneUtil.format(number, PhoneNumberFormat.NATIONAL));
+			}
+		} catch (NumberParseException e) {
+			logger.warn("Error parsing Phone Number: {}", toSave);
+		}
+	}
 }

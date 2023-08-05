@@ -89,7 +89,7 @@ public class PersonUiList implements Serializable {
 		persons.sort(comparator);
 		ofCollection.refreshAll();
 	}
-	
+
 	public void setFilterGroups(List<GroupDef> filteredGroups) {
 		this.filteredGroups.clear();
 		this.filteredGroups.addAll(filteredGroups);

@@ -66,7 +66,7 @@ public class PersonAttendance {
 	public boolean groupsIsEmpty() {
 		return this.groups.isEmpty();
 	}
-	
+
 	@Override
 	public String toString() {
 		return "PersonAttendance [id=" + id + ", prename=" + prename + ", surname=" + surname + ", onDate=" + onDate

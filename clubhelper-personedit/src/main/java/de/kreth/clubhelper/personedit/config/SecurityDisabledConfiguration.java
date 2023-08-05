@@ -1,20 +1,18 @@
-package de.kreth.clubhelper.messungen.config;
+package de.kreth.clubhelper.personedit.config;
 
-import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.web.client.RestTemplate;
 
-@KeycloakConfiguration
-@ConditionalOnProperty(name = "keycloak.enabled", havingValue = "false", matchIfMissing = false)
-public class KeycloakDisabledConfiguration {
+@Configuration
+public class SecurityDisabledConfiguration {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring().antMatchers("/**");
+		return (web) -> web.ignoring().anyRequest();
 	}
 
 	@Bean

@@ -9,7 +9,7 @@ import de.kreth.clubhelper.entity.Relative;
 
 public interface RelativeDao extends CrudRepository<Relative, Long> {
 
-    @Query(value = "SELECT * FROM clubhelper.relative r where r.person1=?1 or r.person2=?1", nativeQuery = true)
-    List<Relative> findByPersonId1OrPerson2Id(long personId);
+	@Query(value = "SELECT * FROM clubhelper.relative r where r.person1=?1 or r.person2=?1", nativeQuery = true)
+	List<Relative> findByPersonId1OrPerson2Id(long personId);
 
 }

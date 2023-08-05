@@ -9,5 +9,5 @@ import de.kreth.clubhelper.entity.DeletedEntry;
 
 public interface DeletedEntriesDao extends CrudRepository<DeletedEntry, Long> {
 
-    List<DeletedEntry> findByChangedGreaterThan(Date date);
+	List<DeletedEntry> findByChangedGreaterThan(Date date);
 }

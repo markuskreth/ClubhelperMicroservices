@@ -12,8 +12,8 @@ import de.kreth.property2java.processor.GenerateProperty2Java;
 @GenerateProperty2Java(resources = "version.properties", format = Format.WithInnerPropertyLoader)
 public class ClubhelperModelApplication {
 
-    public static void main(String[] args) {
-	SpringApplication.run(ClubhelperModelApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(ClubhelperModelApplication.class, args);
+	}
 
 }

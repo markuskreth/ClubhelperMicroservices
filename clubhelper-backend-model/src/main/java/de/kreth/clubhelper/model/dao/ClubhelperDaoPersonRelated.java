@@ -8,10 +8,10 @@ import de.kreth.clubhelper.entity.PersonRelated;
 
 public interface ClubhelperDaoPersonRelated<T extends PersonRelated & EntityAccessor> extends ClubhelperDao<T> {
 
-    List<T> findByPerson(Person person);
+	List<T> findByPerson(Person person);
 
-    List<T> findByPersonId(long personId);
+	List<T> findByPersonId(long personId);
 
-    List<T> findByPersonIdAndDeletedIsNull(long personId);
+	List<T> findByPersonIdAndDeletedIsNull(long personId);
 
 }

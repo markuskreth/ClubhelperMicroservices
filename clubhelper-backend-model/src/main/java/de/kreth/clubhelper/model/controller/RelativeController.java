@@ -20,78 +20,76 @@ import de.kreth.clubhelper.model.dao.RelativeDao;
 @PreAuthorize("hasRole('ROLE_trainer')")
 public class RelativeController extends AbstractController<Relative, RelativeDao> {
 
-    @Autowired
-    private RelativeDao relativeDao;
+	@Autowired
+	private RelativeDao relativeDao;
 
-    public RelativeController() {
-	super(Relative.class);
-    }
-
-    @GetMapping(value = "/for/{id}")
-    public List<Relative> getByParentId(long id) {
-	return relativeDao.findByPersonId1OrPerson2Id(id).stream()
-		.map(r -> map(id, r))
-		.collect(Collectors.toList());
-    }
-
-    private Relation map(long forPersonId, Relative relative) {
-	Relation r;
-	if (relative.getPerson2Bean().getId() == forPersonId) {
-	    r = new Relation(relative.getToPerson1Relation(), relative.getPerson1Bean());
-	} else {
-	    r = new Relation(relative.getToPerson2Relation(), relative.getPerson2Bean());
-	}
-	r.setChanged(relative.getChanged());
-	r.setCreated(relative.getCreated());
-	r.setId(relative.getId());
-	r.setDeleted(relative.getDeleted());
-	return r;
-    }
-
-    public class Relation extends Relative {
-
-	private static final long serialVersionUID = -4881464721582462186L;
-
-	private final String relationType;
-	private final Person relative;
-
-	private Relation(String relationType, Person relative) {
-	    super();
-	    this.relationType = relationType;
-	    this.relative = relative;
-
+	public RelativeController() {
+		super(Relative.class);
 	}
 
-	public String getRelationType() {
-	    return relationType;
+	@GetMapping(value = "/for/{id}")
+	public List<Relative> getByParentId(long id) {
+		return relativeDao.findByPersonId1OrPerson2Id(id).stream().map(r -> map(id, r)).collect(Collectors.toList());
 	}
 
-	public Person getRelative() {
-	    return relative;
+	private Relation map(long forPersonId, Relative relative) {
+		Relation r;
+		if (relative.getPerson2Bean().getId() == forPersonId) {
+			r = new Relation(relative.getToPerson1Relation(), relative.getPerson1Bean());
+		} else {
+			r = new Relation(relative.getToPerson2Relation(), relative.getPerson2Bean());
+		}
+		r.setChanged(relative.getChanged());
+		r.setCreated(relative.getCreated());
+		r.setId(relative.getId());
+		r.setDeleted(relative.getDeleted());
+		return r;
 	}
 
-	@JsonIgnore
-	@Override
-	public Person getPerson1Bean() {
-	    return super.getPerson1Bean();
-	}
+	public class Relation extends Relative {
 
-	@JsonIgnore
-	@Override
-	public Person getPerson2Bean() {
-	    return super.getPerson2Bean();
-	}
+		private static final long serialVersionUID = -4881464721582462186L;
 
-	@JsonIgnore
-	@Override
-	public String getToPerson1Relation() {
-	    return super.getToPerson1Relation();
-	}
+		private final String relationType;
+		private final Person relative;
 
-	@JsonIgnore
-	@Override
-	public String getToPerson2Relation() {
-	    return super.getToPerson2Relation();
+		private Relation(String relationType, Person relative) {
+			super();
+			this.relationType = relationType;
+			this.relative = relative;
+
+		}
+
+		public String getRelationType() {
+			return relationType;
+		}
+
+		public Person getRelative() {
+			return relative;
+		}
+
+		@JsonIgnore
+		@Override
+		public Person getPerson1Bean() {
+			return super.getPerson1Bean();
+		}
+
+		@JsonIgnore
+		@Override
+		public Person getPerson2Bean() {
+			return super.getPerson2Bean();
+		}
+
+		@JsonIgnore
+		@Override
+		public String getToPerson1Relation() {
+			return super.getToPerson1Relation();
+		}
+
+		@JsonIgnore
+		@Override
+		public String getToPerson2Relation() {
+			return super.getToPerson2Relation();
+		}
 	}
-    }
 }

@@ -1,62 +1,14 @@
 package de.kreth.clubhelper.personedit.config;
 
-import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.client.KeycloakClientRequestFactory;
-import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-@KeycloakConfiguration
-@ConditionalOnProperty(name = "keycloak.enabled", havingValue = "true", matchIfMissing = true)
-public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
-	@Autowired
-	private KeycloakClientRequestFactory factory;
-
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) {
-		KeycloakAuthenticationProvider keyCloakAuthProvider = keycloakAuthenticationProvider();
-		keyCloakAuthProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
-		auth.authenticationProvider(keyCloakAuthProvider);
-	}
-
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-
-	public KeycloakRestTemplate restTemplate() {
-		return new KeycloakRestTemplate(factory);
-	}
-
-	@Bean
-	@Override
-	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-	}
-
-	@Override
-	public void configure(HttpSecurity http) throws Exception {
-		super.configure(http);
-
-		http.cors().and().csrf().disable().anonymous().disable()
-//		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
-				.authorizeRequests().requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll().anyRequest()
-				.authenticated().and().exceptionHandling().accessDeniedPage("/accessDeniedPage");
-	}
+@Configuration
+public class UiSecurityConfig {
 
 	@Bean
 	public CorsFilter corsFilter() {
@@ -73,13 +25,12 @@ public class UiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("*", config);
-//	source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
 	}
 
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers(
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() {
+		return (web) -> web.ignoring().requestMatchers(
 				// Vaadin Flow static resources //
 				"/VAADIN/**",
 				// the standard favicon URI

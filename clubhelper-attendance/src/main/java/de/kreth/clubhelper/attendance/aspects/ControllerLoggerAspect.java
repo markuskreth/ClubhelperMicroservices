@@ -16,23 +16,23 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class ControllerLoggerAspect extends AbstractLoggerAspect {
 
-    @Pointcut("execution (public * de.kreth.clubhelper.attendance.remote..*(..))")
-    private void invocation() {
-    }
+	@Pointcut("execution (public * de.kreth.clubhelper.attendance.remote..*(..))")
+	private void invocation() {
+	}
 
-    @Before("invocation()")
-    public void logCall(JoinPoint joinPoint) throws Throwable {
-	log(INFO, joinPoint);
-    }
+	@Before("invocation()")
+	public void logCall(JoinPoint joinPoint) throws Throwable {
+		log(INFO, joinPoint);
+	}
 
-    @AfterThrowing(pointcut = "invocation()", throwing = "ex")
-    public void logCall(JoinPoint joinPoint, Exception ex) throws Throwable {
-	log(ERROR, joinPoint);
-    }
+	@AfterThrowing(pointcut = "invocation()", throwing = "ex")
+	public void logCall(JoinPoint joinPoint, Exception ex) throws Throwable {
+		log(ERROR, joinPoint);
+	}
 
-    @AfterReturning(pointcut = "invocation()", returning = "result")
-    public void logCall(JoinPoint joinPoint, Object result) throws Throwable {
-	log(DEBUG, joinPoint, result);
-    }
+	@AfterReturning(pointcut = "invocation()", returning = "result")
+	public void logCall(JoinPoint joinPoint, Object result) throws Throwable {
+		log(DEBUG, joinPoint, result);
+	}
 
 }

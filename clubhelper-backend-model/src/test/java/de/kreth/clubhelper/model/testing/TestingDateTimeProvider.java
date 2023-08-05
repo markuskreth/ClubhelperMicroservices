@@ -7,20 +7,20 @@ import de.kreth.clubhelper.model.config.LocalDateTimeProvider;
 
 public class TestingDateTimeProvider implements LocalDateTimeProvider {
 
-    Supplier<LocalDateTime> supplier;
+	Supplier<LocalDateTime> supplier;
 
-    public TestingDateTimeProvider() {
-	this(() -> LocalDateTime.now());
-    }
+	public TestingDateTimeProvider() {
+		this(() -> LocalDateTime.now());
+	}
 
-    public TestingDateTimeProvider(Supplier<LocalDateTime> supplier) {
-	super();
-	this.supplier = supplier;
-    }
+	public TestingDateTimeProvider(Supplier<LocalDateTime> supplier) {
+		super();
+		this.supplier = supplier;
+	}
 
-    @Override
-    public LocalDateTime now() {
-	return supplier.get();
-    }
+	@Override
+	public LocalDateTime now() {
+		return supplier.get();
+	}
 
 }

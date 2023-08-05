@@ -11,11 +11,11 @@ import de.kreth.clubhelper.entity.Person;
 
 public interface AttendanceDao extends CrudRepository<Attendance, Long>, ClubhelperDaoPersonRelated<Attendance> {
 
-    List<Attendance> findByOnDate(LocalDate onDate);
+	List<Attendance> findByOnDate(LocalDate onDate);
 
-    List<Attendance> findByOnDateBetween(LocalDate startDate, LocalDate endDate);
+	List<Attendance> findByOnDateBetween(LocalDate startDate, LocalDate endDate);
 
-    Attendance findByPersonAndOnDate(Person person, LocalDate onDate);
+	Attendance findByPersonAndOnDate(Person person, LocalDate onDate);
 
-    List<Attendance> findByChangedGreaterThan(LocalDateTime date);
+	List<Attendance> findByChangedGreaterThan(LocalDateTime date);
 }

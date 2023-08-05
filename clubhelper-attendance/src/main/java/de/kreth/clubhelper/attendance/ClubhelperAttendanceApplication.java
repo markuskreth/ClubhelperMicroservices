@@ -13,8 +13,7 @@ import de.kreth.property2java.processor.Format;
 import de.kreth.property2java.processor.GenerateProperty2Java;
 
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
-@PWA(name = "MTV Trampolin Anwesenheit", shortName = "Anwesenheit", 
-	description = "Dies ist eine App zur Erfassung von Anwesenheiten für die Trampolingruppe des MTV Groß-Buchholz.")
+@PWA(name = "MTV Trampolin Anwesenheit", shortName = "Anwesenheit", description = "Dies ist eine App zur Erfassung von Anwesenheiten für die Trampolingruppe des MTV Groß-Buchholz.")
 @GenerateProperty2Java(resources = { "version.properties" }, format = Format.WithInnerPropertyLoader)
 public class ClubhelperAttendanceApplication implements AppShellConfigurator {
 

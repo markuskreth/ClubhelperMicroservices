@@ -37,167 +37,164 @@ import de.kreth.clubhelper.model.dao.PersonDao;
 @PreAuthorize("isAuthenticated()")
 public class PersonController {
 
-    private LocalDateTimeProvider localDateTimeProvider;
+	private LocalDateTimeProvider localDateTimeProvider;
 
-    private PersonDao personDao;
-    private AttendanceDao attendanceDao;
+	private PersonDao personDao;
+	private AttendanceDao attendanceDao;
 
-    @Autowired
-    public void setPersonDao(PersonDao personDao) {
-	this.personDao = personDao;
-    }
-
-    @Autowired
-    public void setAttendanceDao(AttendanceDao attendanceDao) {
-	this.attendanceDao = attendanceDao;
-    }
-
-    @Autowired
-    public void setLocalDateTimeProvider(LocalDateTimeProvider localDateTimeProvider) {
-	this.localDateTimeProvider = localDateTimeProvider;
-    }
-
-    @GetMapping
-    @PreAuthorize("hasAnyRole('trainer', 'admin')")
-    public @ResponseBody List<Person> getAll() {
-	return personDao.findByDeletedIsNull();
-    }
-
-    @GetMapping(value = "/ordered/{order}")
-    @PreAuthorize("hasAnyRole('trainer', 'admin')")
-    public @ResponseBody List<Person> getAllOrdered(@PathVariable("order") OrderBy order) {
-
-	List<Person> list;
-	switch (order) {
-	case ATTENDANCE:
-	    list = orderByAttendance();
-	    break;
-	case NAME:
-	    list = personDao.findByDeletedIsNull(Sort.by(Order.asc("surname"), Order.asc("prename")));
-	    break;
-	default:
-	    list = personDao.findByDeletedIsNull(Sort.by(Order.asc("id")));
-	    break;
+	@Autowired
+	public void setPersonDao(PersonDao personDao) {
+		this.personDao = personDao;
 	}
 
-	return list;
-    }
+	@Autowired
+	public void setAttendanceDao(AttendanceDao attendanceDao) {
+		this.attendanceDao = attendanceDao;
+	}
 
-    private List<Person> orderByAttendance() {
+	@Autowired
+	public void setLocalDateTimeProvider(LocalDateTimeProvider localDateTimeProvider) {
+		this.localDateTimeProvider = localDateTimeProvider;
+	}
 
-	Map<Person, Long> personMap = getAll()
-		.parallelStream()
-		.collect(Collectors.toMap(Function.identity(), a -> 0L));
+	@GetMapping
+	@PreAuthorize("hasAnyRole('trainer', 'admin')")
+	public @ResponseBody List<Person> getAll() {
+		return personDao.findByDeletedIsNull();
+	}
 
-	List<Attendance> attendances = attendanceDao
-		.findByChangedGreaterThan(LocalDateTime.now().minusYears(2));
+	@GetMapping(value = "/ordered/{order}")
+	@PreAuthorize("hasAnyRole('trainer', 'admin')")
+	public @ResponseBody List<Person> getAllOrdered(@PathVariable("order") OrderBy order) {
 
-	Map<Person, LocalDate> personLastDate = new HashMap<>();
-
-	for (Attendance attendance : attendances) {
-	    Person person = attendance.getPerson();
-	    if (person.isDeleted()) {
-		continue;
-	    }
-	    Long count = personMap.get(person);
-	    personMap.put(person, count + 1);
-	    if (personLastDate.containsKey(person)) {
-		if (attendance.getOnDate().isAfter(personLastDate.get(person))) {
-		    personLastDate.put(person, attendance.getOnDate());
+		List<Person> list;
+		switch (order) {
+		case ATTENDANCE:
+			list = orderByAttendance();
+			break;
+		case NAME:
+			list = personDao.findByDeletedIsNull(Sort.by(Order.asc("surname"), Order.asc("prename")));
+			break;
+		default:
+			list = personDao.findByDeletedIsNull(Sort.by(Order.asc("id")));
+			break;
 		}
-	    } else {
-		personLastDate.put(person, attendance.getOnDate());
-	    }
+
+		return list;
 	}
 
-	List<Person> result = new ArrayList<Person>(personMap.keySet());
-	result.sort(new Comparator<Person>() {
+	private List<Person> orderByAttendance() {
 
-	    @Override
-	    public int compare(Person o1, Person o2) {
-		LocalDate date1 = personLastDate.get(o1);
-		LocalDate date2 = personLastDate.get(o2);
-		if (isEqual(date1, date2)) {
-		    long count1 = personMap.get(o1).longValue();
-		    long count2 = personMap.get(o2).longValue();
-		    return Long.compare(count1, count2);
+		Map<Person, Long> personMap = getAll().parallelStream().collect(Collectors.toMap(Function.identity(), a -> 0L));
+
+		List<Attendance> attendances = attendanceDao.findByChangedGreaterThan(LocalDateTime.now().minusYears(2));
+
+		Map<Person, LocalDate> personLastDate = new HashMap<>();
+
+		for (Attendance attendance : attendances) {
+			Person person = attendance.getPerson();
+			if (person.isDeleted()) {
+				continue;
+			}
+			Long count = personMap.get(person);
+			personMap.put(person, count + 1);
+			if (personLastDate.containsKey(person)) {
+				if (attendance.getOnDate().isAfter(personLastDate.get(person))) {
+					personLastDate.put(person, attendance.getOnDate());
+				}
+			} else {
+				personLastDate.put(person, attendance.getOnDate());
+			}
 		}
-		if (date1 == null || date2 == null) {
-		    if (date1 == null) {
-			return 1;
-		    }
-		    return -1;
+
+		List<Person> result = new ArrayList<Person>(personMap.keySet());
+		result.sort(new Comparator<Person>() {
+
+			@Override
+			public int compare(Person o1, Person o2) {
+				LocalDate date1 = personLastDate.get(o1);
+				LocalDate date2 = personLastDate.get(o2);
+				if (isEqual(date1, date2)) {
+					long count1 = personMap.get(o1).longValue();
+					long count2 = personMap.get(o2).longValue();
+					return Long.compare(count1, count2);
+				}
+				if (date1 == null || date2 == null) {
+					if (date1 == null) {
+						return 1;
+					}
+					return -1;
+				}
+				int compareTo = date2.compareTo(date1);
+				if (compareTo == 0) {
+					compareTo = Long.compare(o1.getId(), o2.getId());
+				}
+				return compareTo;
+			}
+		});
+
+		return result;
+	}
+
+	boolean isEqual(LocalDate d1, LocalDate d2) {
+		if (d1 == null && d2 == null) {
+			return true;
 		}
-		int compareTo = date2.compareTo(date1);
-		if (compareTo == 0) {
-		    compareTo = Long.compare(o1.getId(), o2.getId());
+		if (d1 != null) {
+			return d1.equals(d2);
 		}
-		return compareTo;
-	    }
-	});
+		return d2.equals(d1);
 
-	return result;
-    }
-
-    boolean isEqual(LocalDate d1, LocalDate d2) {
-	if (d1 == null && d2 == null) {
-	    return true;
-	}
-	if (d1 != null) {
-	    return d1.equals(d2);
-	}
-	return d2.equals(d1);
-
-    }
-
-    @GetMapping(value = "/withdeleted")
-    @PreAuthorize("hasAnyRole('trainer', 'admin')")
-    public @ResponseBody List<Person> getAllIncludingDeleted() {
-	return personDao.findAll();
-    }
-
-    @GetMapping(value = "/{id}")
-    public @ResponseBody Optional<Person> getById(@PathVariable("id") final long id) {
-	return personDao.findById(id);
-    }
-
-    @DeleteMapping(value = "/{id}")
-    public @ResponseBody Person delete(@PathVariable("id") final long id) {
-	Optional<Person> optional = personDao.findById(id);
-	if (optional.isPresent()) {
-	    Person person = optional.get();
-	    person.setDeleted(localDateTimeProvider.now());
-	    personDao.save(person);
 	}
 
-	return optional.orElseThrow(() -> new RuntimeException("Person not found by id=" + id));
-    }
+	@GetMapping(value = "/withdeleted")
+	@PreAuthorize("hasAnyRole('trainer', 'admin')")
+	public @ResponseBody List<Person> getAllIncludingDeleted() {
+		return personDao.findAll();
+	}
 
-    @PutMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole('trainer', 'admin')")
+	@GetMapping(value = "/{id}")
+	public @ResponseBody Optional<Person> getById(@PathVariable("id") final long id) {
+		return personDao.findById(id);
+	}
+
+	@DeleteMapping(value = "/{id}")
+	public @ResponseBody Person delete(@PathVariable("id") final long id) {
+		Optional<Person> optional = personDao.findById(id);
+		if (optional.isPresent()) {
+			Person person = optional.get();
+			person.setDeleted(localDateTimeProvider.now());
+			personDao.save(person);
+		}
+
+		return optional.orElseThrow(() -> new RuntimeException("Person not found by id=" + id));
+	}
+
+	@PutMapping(value = "/{id}")
+	@PreAuthorize("hasAnyRole('trainer', 'admin')")
 //    @ApiOperation("Change an existing Person. Restricted to trainers and admins.")
-    public Person update(@PathVariable("id") final long id, @RequestBody Person person) {
-	if (id != person.getId()) {
-	    throw new IllegalArgumentException("path id must match person id.");
+	public Person update(@PathVariable("id") final long id, @RequestBody Person person) {
+		if (id != person.getId()) {
+			throw new IllegalArgumentException("path id must match person id.");
+		}
+		if (person.getId() == null || person.getId() < 0) {
+			throw new IllegalStateException("For update id must be set and person must be persistent.");
+		}
+		person.setChanged(localDateTimeProvider.now());
+		personDao.save(person);
+		return person;
 	}
-	if (person.getId() == null || person.getId() < 0) {
-	    throw new IllegalStateException("For update id must be set and person must be persistent.");
-	}
-	person.setChanged(localDateTimeProvider.now());
-	personDao.save(person);
-	return person;
-    }
 
-    @PostMapping
-    @PreAuthorize("hasAnyRole('trainer', 'admin')")
+	@PostMapping
+	@PreAuthorize("hasAnyRole('trainer', 'admin')")
 //    @ApiOperation("Insert a new Person. Restricted to trainers and admins.")
-    public Person insert(@RequestBody Person p) {
+	public Person insert(@RequestBody Person p) {
 
-	LocalDateTime now = localDateTimeProvider.now();
-	p.setChanged(now);
-	p.setCreated(now);
-	Person saved = personDao.save(p);
-	return saved;
-    }
+		LocalDateTime now = localDateTimeProvider.now();
+		p.setChanged(now);
+		p.setCreated(now);
+		Person saved = personDao.save(p);
+		return saved;
+	}
 
 }

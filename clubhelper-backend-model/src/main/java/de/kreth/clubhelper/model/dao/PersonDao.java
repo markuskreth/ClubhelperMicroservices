@@ -12,13 +12,13 @@ import de.kreth.clubhelper.entity.Person;
 @Repository
 public interface PersonDao extends CrudRepository<Person, Long> {
 
-    List<Person> findByChangedGreaterThan(Date date);
+	List<Person> findByChangedGreaterThan(Date date);
 
-    List<Person> findByDeletedIsNull();
-    
-    List<Person> findByDeletedIsNull(Sort sort);
+	List<Person> findByDeletedIsNull();
 
-    @Override
-    List<Person> findAll();
+	List<Person> findByDeletedIsNull(Sort sort);
+
+	@Override
+	List<Person> findAll();
 
 }

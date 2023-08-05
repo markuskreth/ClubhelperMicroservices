@@ -31,38 +31,38 @@ import de.kreth.clubhelper.attendance.remote.BusinessImpl;
 @PreAuthorize("hasRole('ROLE_trainer')")
 public class PrintAttendance extends VerticalLayout implements HasUrlParameter<String>, BeforeEnterObserver {
 
-    private static final long serialVersionUID = 1L;
-    private LocalDate onDate;
+	private static final long serialVersionUID = 1L;
+	private LocalDate onDate;
 
-    public PrintAttendance() {
-	add(new H1("Druck der Anwesenheitsliste"));
-    }
-
-    Business getRestService() {
-	return WebApplicationContextUtils.getWebApplicationContext(VaadinServlet.getCurrent().getServletContext())
-		.getBean(BusinessImpl.class);
-    }
-
-    @Override
-    public void setParameter(BeforeEvent event, String parameter) {
-	onDate = LocalDate.parse(parameter, DateTimeFormatter.BASIC_ISO_DATE);
-    }
-
-    @Override
-    public void beforeEnter(BeforeEnterEvent event) {
-
-	HorizontalLayout exporterLayout = new HorizontalLayout();
-
-	add(exporterLayout);
-	List<Exporter> exporters = Exporter.getExporters();
-	for (Exporter exporter : exporters) {
-	    Button exportButton = new Button(exporter.getName(), VaadinIcon.DOWNLOAD.create());
-	    StreamResource resource = exporter.asResource(onDate, getRestService());
-	    Anchor anchor = new Anchor(resource, null);
-	    anchor.getElement().setAttribute("download", true);
-	    anchor.add(exportButton);
-	    exporterLayout.add(anchor);
+	public PrintAttendance() {
+		add(new H1("Druck der Anwesenheitsliste"));
 	}
-    }
+
+	Business getRestService() {
+		return WebApplicationContextUtils.getWebApplicationContext(VaadinServlet.getCurrent().getServletContext())
+				.getBean(BusinessImpl.class);
+	}
+
+	@Override
+	public void setParameter(BeforeEvent event, String parameter) {
+		onDate = LocalDate.parse(parameter, DateTimeFormatter.BASIC_ISO_DATE);
+	}
+
+	@Override
+	public void beforeEnter(BeforeEnterEvent event) {
+
+		HorizontalLayout exporterLayout = new HorizontalLayout();
+
+		add(exporterLayout);
+		List<Exporter> exporters = Exporter.getExporters();
+		for (Exporter exporter : exporters) {
+			Button exportButton = new Button(exporter.getName(), VaadinIcon.DOWNLOAD.create());
+			StreamResource resource = exporter.asResource(onDate, getRestService());
+			Anchor anchor = new Anchor(resource, null);
+			anchor.getElement().setAttribute("download", true);
+			anchor.add(exportButton);
+			exporterLayout.add(anchor);
+		}
+	}
 
 }

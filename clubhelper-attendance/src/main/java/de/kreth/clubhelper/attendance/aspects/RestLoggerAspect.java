@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class RestLoggerAspect extends AbstractLoggerAspect {
 
-    @Pointcut("execution (public * org.springframework.web.client.RestTemplate..*(..))")
-    private void invocation() {
-    }
+	@Pointcut("execution (public * org.springframework.web.client.RestTemplate..*(..))")
+	private void invocation() {
+	}
 
-    @Before("invocation()")
-    public void logRestCall(JoinPoint joinPoint) {
-	log(INFO, joinPoint);
-    }
+	@Before("invocation()")
+	public void logRestCall(JoinPoint joinPoint) {
+		log(INFO, joinPoint);
+	}
 
 }

@@ -9,5 +9,5 @@ import de.kreth.clubhelper.entity.GroupDef;
 
 public interface GroupDao extends CrudRepository<GroupDef, Long> {
 
-    List<GroupDef> findByChangedGreaterThan(Date date);
+	List<GroupDef> findByChangedGreaterThan(Date date);
 }
